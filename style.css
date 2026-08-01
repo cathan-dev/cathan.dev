@@ -158,21 +158,21 @@ nav {
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .nav-text-cursor {
-        animation: none;
-    }
-}
-
 .nav-text-cursor {
     background-color: var(--bg);
     color: var(--muted);
 }
 
-.nav-container:focus-within .nav-text-cursor {
+.nav-container:has(.nav-input:focus) .nav-text-cursor {
     background-color: var(--ink);
     color: var(--bg);
     animation: cursor-blink 1.5s step-end infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nav-container:has(.nav-input:focus) .nav-text-cursor {
+        animation: none;
+    }
 }
 
 /* ---------- STATE ---------- */
@@ -181,7 +181,7 @@ nav {
     display: none;
 }
 
-.nav-container:focus-within .is-selected .nav-link-text {
+.nav-container:has(.nav-input:focus) .is-selected .nav-link-text {
     background-color: var(--ink);
     color: var(--bg);
 }

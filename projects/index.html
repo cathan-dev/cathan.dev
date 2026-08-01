@@ -3,7 +3,8 @@
 <html lang="en">
 
 <head>
-    <title>cathan.dev</title>
+    <title>cathan.dev projects</title>
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/DepartureMono-Regular.woff2" crossorigin>
     <link href="/style.css" rel="stylesheet">
     <script src="/scripts/console.js" defer></script>
 </head>
@@ -15,4 +16,50 @@
     <main>
         <p>This is the projects page</p>
     </main>
+    <nav>
+        <div class="nav-container">
+            <ul class="nav-list">
+                <li class="nav-list-item">
+                    <a href="/help/" class="nav-link" data-page="help">
+                        <span class="nav-link-text">[ help<span class="nav-link-closer">]</span></span>
+                    </a>
+                </li>
+                <li class="nav-list-item">
+                    <a href="/" class="nav-link" data-page="home">
+                        <span class="nav-link-text">[ home<span class="nav-link-closer">]</span></span>
+                    </a>
+                </li>
+                <li class="nav-list-item">
+                    <a href="/now/" class="nav-link" data-page="now">
+                        <span class="nav-link-text">[ now<span class="nav-link-closer">]</span></span>
+                    </a>
+                </li>
+                <li class="nav-list-item">
+                    <a href="/projects/" class="nav-link" data-page="projects">
+                        <span class="nav-link-text">[ projects<span class="nav-link-closer">]</span></span>
+                    </a>
+                </li>
+                <li class="nav-list-item">
+                    <a href="/shelf/" class="nav-link" data-page="shelf">
+                        <span class="nav-link-text">[ shelf<span class="nav-link-closer">]</span></span>
+                    </a>
+                </li>
+                <li class="nav-list-item">
+                    <a href="/updates/" class="nav-link" data-page="updates">
+                        <span class="nav-link-text">[ updates<span class="nav-link-closer">]</span></span>
+                    </a>
+                </li>
+            </ul>
+            <div class="nav-input-container">
+                <span class="nav-prompt">[</span>
+                <input id="nav-input" class="nav-input" autocomplete="off" autocapitalize="off" spellcheck="false"
+                    aria-label="Type to navigate pages" autocorrect="off" />
+            </div>
+            <div class="nav-search-overlay-container">
+                <span class="nav-prompt">[</span>
+                <p class="nav-overlay-text"><span class="nav-before-cursor"></span><span
+                        class="nav-text-cursor"></span><span class="nav-after-cursor"></span></p>
+            </div>
+        </div>
+    </nav>
 </body>
