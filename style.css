@@ -1,11 +1,14 @@
+/* ---------- TOKENS ---------- */
+
 :root {
-    --prompt-width: 2ch;
-    color-scheme: dark;
     --bg: hsl(222 22% 5%);
     --ink: hsl(222 22% 95%);
     --muted: hsl(222 22% 68%);
     --accent: hsl(186 67.7% 53.9%);
+    color-scheme: dark;
 }
+
+/* ---------- FONTS ---------- */
 
 @font-face {
     font-family: "Departure Mono";
@@ -14,109 +17,15 @@
     font-display: swap;
 }
 
+/* ---------- RESET ---------- */
+
 *,
 *::before,
 *::after {
     box-sizing: border-box;
 }
 
-nav {
-    position: fixed;
-    left: 1.5em;
-    bottom: 1em;
-}
-
-nav .nav-container {
-    position: relative;
-}
-
-nav .nav-list {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-
-nav .is-hidden {
-    display: none;
-}
-
-nav .nav-link {
-    text-decoration: none;
-    display: block;
-}
-
-nav .nav-link .nav-link-text {
-    background-color: var(--bg);
-    color: var(--ink);
-}
-
-nav .nav-link .nav-link-closer {
-    color: var(--bg);
-    padding-left: 1ch;
-}
-
-nav .nav-link:hover .nav-link-text {
-    color: var(--bg);
-    background-color: var(--ink);
-}
-
-nav .nav-link:focus-visible {
-    outline: 2px solid transparent;
-}
-
-nav .nav-link:focus-visible span {
-    color: var(--bg);
-    background-color: var(--ink);
-}
-
-nav .nav-input-container {
-    display: flex;
-    align-items: baseline;
-    gap: 1ch;
-}
-
-nav .nav-prompt {
-    color: var(--accent);
-}
-
-nav .nav-input {
-    font: inherit;
-    background-color: inherit;
-    color: inherit;
-    border: 0;
-    padding: 0;
-    caret-color: transparent;
-}
-
-nav .nav-search-overlay-container {
-    display: flex;
-    align-items: baseline;
-    gap: 1ch;
-    position: absolute;
-    inset-block-end: 0;
-    pointer-events: none;
-}
-
-nav .nav-text-cursor {
-    background-color: var(--bg);
-    color: var(--muted);
-}
-
-nav .nav-container:focus-within .nav-text-cursor {
-    background-color: var(--ink);
-    color: var(--bg);
-}
-
-nav .nav-overlay-text {
-    color: var(--muted);
-    margin: 0;
-}
-
-nav input:focus-visible {
-    outline: none;
-}
+/* ---------- BASE ---------- */
 
 body {
     background-color: var(--bg);
@@ -146,3 +55,135 @@ a {
     text-decoration-color: var(--muted);
     text-decoration-thickness: 1px;
 }
+
+/* ---------- NAV ---------- */
+
+nav {
+    position: fixed;
+    left: 1.5em;
+    bottom: 1em;
+}
+
+.nav-container {
+    position: relative;
+}
+
+/* --- nav: list --- */
+
+.nav-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.nav-link {
+    text-decoration: none;
+    display: block;
+}
+
+.nav-link-text {
+    background-color: var(--bg);
+    color: var(--ink);
+}
+
+.nav-link-closer {
+    color: var(--bg);
+    padding-left: 1ch;
+}
+
+.nav-link:hover .nav-link-text {
+    color: var(--bg);
+    background-color: var(--ink);
+}
+
+.nav-link:focus-visible {
+    outline: 2px solid transparent;
+}
+
+.nav-link:focus-visible span {
+    color: var(--bg);
+    background-color: var(--ink);
+}
+
+/* --- nav: terminal --- */
+
+.nav-input-container {
+    display: flex;
+    align-items: baseline;
+    gap: 1ch;
+}
+
+.nav-prompt {
+    color: var(--accent);
+}
+
+.nav-input {
+    font: inherit;
+    background-color: inherit;
+    color: inherit;
+    border: 0;
+    padding: 0;
+    caret-color: transparent;
+}
+
+.nav-input:focus-visible {
+    outline: none;
+}
+
+.nav-search-overlay-container {
+    display: flex;
+    align-items: baseline;
+    gap: 1ch;
+    position: absolute;
+    inset-block-end: 0;
+    pointer-events: none;
+}
+
+.nav-overlay-text {
+    color: var(--muted);
+    margin: 0;
+    white-space: pre;
+}
+
+.nav-before-cursor {
+    color: transparent;
+}
+
+@keyframes cursor-blink {
+    60% {
+        background-color: var(--bg);
+        color: var(--muted);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nav-text-cursor {
+        animation: none;
+    }
+}
+
+.nav-text-cursor {
+    background-color: var(--bg);
+    color: var(--muted);
+}
+
+.nav-container:focus-within .nav-text-cursor {
+    background-color: var(--ink);
+    color: var(--bg);
+    animation: cursor-blink 1.5s step-end infinite;
+}
+
+/* ---------- STATE ---------- */
+
+.is-hidden {
+    display: none;
+}
+
+.nav-container:focus-within .is-selected .nav-link-text {
+    background-color: var(--ink);
+    color: var(--bg);
+}
+
+/* ---------- RESPONSIVE ---------- */
