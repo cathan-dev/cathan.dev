@@ -1,0 +1,148 @@
+:root {
+    --prompt-width: 2ch;
+    color-scheme: dark;
+    --bg: hsl(222 22% 5%);
+    --ink: hsl(222 22% 95%);
+    --muted: hsl(222 22% 68%);
+    --accent: hsl(186 67.7% 53.9%);
+}
+
+@font-face {
+    font-family: "Departure Mono";
+    src: url("fonts/DepartureMono-Regular.woff2") format("woff2");
+    font-weight: normal;
+    font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+nav {
+    position: fixed;
+    left: 1.5em;
+    bottom: 1em;
+}
+
+nav .nav-container {
+    position: relative;
+}
+
+nav .nav-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+nav .is-hidden {
+    display: none;
+}
+
+nav .nav-link {
+    text-decoration: none;
+    display: block;
+}
+
+nav .nav-link .nav-link-text {
+    background-color: var(--bg);
+    color: var(--ink);
+}
+
+nav .nav-link .nav-link-closer {
+    color: var(--bg);
+    padding-left: 1ch;
+}
+
+nav .nav-link:hover .nav-link-text {
+    color: var(--bg);
+    background-color: var(--ink);
+}
+
+nav .nav-link:focus-visible {
+    outline: 2px solid transparent;
+}
+
+nav .nav-link:focus-visible span {
+    color: var(--bg);
+    background-color: var(--ink);
+}
+
+nav .nav-input-container {
+    display: flex;
+    align-items: baseline;
+    gap: 1ch;
+}
+
+nav .nav-prompt {
+    color: var(--accent);
+}
+
+nav .nav-input {
+    font: inherit;
+    background-color: inherit;
+    color: inherit;
+    border: 0;
+    padding: 0;
+    caret-color: transparent;
+}
+
+nav .nav-search-overlay-container {
+    display: flex;
+    align-items: baseline;
+    gap: 1ch;
+    position: absolute;
+    inset-block-end: 0;
+    pointer-events: none;
+}
+
+nav .nav-text-cursor {
+    background-color: var(--bg);
+    color: var(--muted);
+}
+
+nav .nav-container:focus-within .nav-text-cursor {
+    background-color: var(--ink);
+    color: var(--bg);
+}
+
+nav .nav-overlay-text {
+    color: var(--muted);
+    margin: 0;
+}
+
+nav input:focus-visible {
+    outline: none;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--ink);
+
+    font-family: "Departure Mono", monospace;
+    font-size: 22px;
+    line-height: 1.5;
+
+    max-width: 65ch;
+    margin-inline: auto;
+    padding: 1em;
+}
+
+h1 {
+    font-weight: normal;
+    font-size: 44px;
+}
+
+h2 {
+    font-weight: normal;
+    font-size: 33px;
+}
+
+a {
+    color: var(--accent);
+    text-decoration-color: var(--muted);
+    text-decoration-thickness: 1px;
+}
