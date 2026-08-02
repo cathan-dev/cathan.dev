@@ -27,7 +27,7 @@ nav {
 
 .nav-link-text {
     background-color: var(--bg);
-    color: var(--ink);
+    color: var(--text);
 }
 
 .nav-link-closer {
@@ -37,7 +37,7 @@ nav {
 
 .nav-link:hover .nav-link-text {
     color: var(--bg);
-    background-color: var(--ink);
+    background-color: var(--text);
 }
 
 .nav-link:focus-visible {
@@ -46,7 +46,7 @@ nav {
 
 .nav-link:focus-visible span {
     color: var(--bg);
-    background-color: var(--ink);
+    background-color: var(--text);
 }
 
 /* --- nav: terminal --- */
@@ -58,7 +58,7 @@ nav {
 }
 
 .nav-prompt {
-    color: var(--accent);
+    color: var(--interaction);
 }
 
 .nav-input {
@@ -106,11 +106,12 @@ nav {
 }
 
 .nav-error {
-    color: var(--error);
+    background-color: var(--mark);
+    color: var(--bg);
 }
 
 .nav-container:has(.nav-input:focus) .nav-text-cursor {
-    background-color: var(--ink);
+    background-color: var(--text);
     color: var(--bg);
     animation: cursor-blink 1.5s step-end infinite;
 }
@@ -124,6 +125,6 @@ nav {
 /* ---------- STATE ---------- */
 
 .nav-container:has(.nav-input:focus) .is-selected .nav-link-text {
-    background-color: var(--ink);
+    background-color: var(--text);
     color: var(--bg);
 }

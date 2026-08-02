@@ -1,12 +1,25 @@
 /* ---------- TOKENS ---------- */
 
 :root {
-    --bg: hsl(222 22% 5%);
-    --ink: hsl(222 22% 95%);
-    --muted: hsl(222 22% 68%);
-    --accent: hsl(186 67.7% 53.9%);
-    --error: hsl(0 80% 60%);
     color-scheme: dark;
+
+    --bg: #0C0F17;
+    /* page background */
+    --surface: #232936;
+    /* panels ONLY, never a state */
+    --rule: #3C4251;
+    /* hairlines, dividers */
+    --muted: #949FB6;
+    /* secondary text, metadata, status */
+    --text: #D6DBE6;
+    /* body text */
+
+    --interaction: #3BCDDC;
+    /* links, prompt, cursor */
+    --voice: #E1AD57;
+    /* verdicts, emphasis — me talking */
+    --mark: #D25BCB;
+    /* backgrounds only, --bg text on top */
 }
 
 /* ---------- FONTS ---------- */
@@ -30,7 +43,7 @@
 
 body {
     background-color: var(--bg);
-    color: var(--ink);
+    color: var(--text);
 
     font-family: "Departure Mono", monospace;
     font-size: 22px;
@@ -52,7 +65,7 @@ h2 {
 }
 
 a {
-    color: var(--accent);
+    color: var(--interaction);
     text-decoration-color: var(--muted);
     text-decoration-thickness: 1px;
 }
