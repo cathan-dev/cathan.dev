@@ -5,6 +5,7 @@
     --ink: hsl(222 22% 95%);
     --muted: hsl(222 22% 68%);
     --accent: hsl(186 67.7% 53.9%);
+    --error: hsl(0 80% 60%);
     color-scheme: dark;
 }
 

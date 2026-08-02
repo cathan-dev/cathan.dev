@@ -105,6 +105,10 @@ nav {
     color: var(--muted);
 }
 
+.nav-error {
+    color: var(--error);
+}
+
 .nav-container:has(.nav-input:focus) .nav-text-cursor {
     background-color: var(--ink);
     color: var(--bg);

@@ -2,26 +2,25 @@
 
 const navElements = {
     input: document.getElementById("nav-input"),
-    list: document.querySelector(".nav-list"),
-    listItems: document.querySelectorAll(".nav-list-item"),
     listLinks: document.querySelectorAll(".nav-link"),
-    listText: document.querySelectorAll(".nav-link-text"),
-    overlayText: document.querySelector(".nav-overlay-text"),
     beforeCursor: document.querySelector(".nav-before-cursor"),
     textCursor: document.querySelector(".nav-text-cursor"),
-    afterCursor: document.querySelector(".nav-after-cursor")
+    afterCursor: document.querySelector(".nav-after-cursor"),
+    error: document.querySelector(".nav-error")
 }
 
 const navData = {
     inputText: "",
     listEligible: [...navElements.listLinks],
     selectedIndex: 0,
-    errorFlag: false
+    errorMessage: null,
+    errorTimer: null
 }
 
 // ---------- INPUT FUNCTIONS ---------- //
 
 function inputHandler() {
+    removeError()
     navData.selectedIndex = 0
     navData.inputText = getInputText()
     updateEligible()
@@ -43,6 +42,11 @@ function matchLinkText(page) {
 // ---------- KEYDOWN FUNCTIONS ---------- //
 
 function keydownHandler(e) {
+    if (navData.errorMessage != null) {
+        removeError();
+        render();
+        return
+    }
     switch (e.key) {
         case "Enter":
             e.preventDefault()
@@ -66,9 +70,11 @@ function keydownHandler(e) {
             break
         case "ArrowLeft":
             e.preventDefault()
+            render()
             break
         case "ArrowRight":
             e.preventDefault()
+            render()
             break
         case "Escape":
             e.preventDefault()
@@ -81,6 +87,9 @@ function keydownHandler(e) {
 function enterKeydownHandler() {
     if (navData.listEligible.length > 0) {
         window.location.assign(navData.listEligible[navData.selectedIndex].href)
+    }
+    else {
+        setError()
     }
 }
 
@@ -107,6 +116,25 @@ function downKeydownHandler() {
             navData.selectedIndex = 0
         }
     }
+}
+
+function setError() {
+    navData.errorMessage = navData.inputText + ": not found"
+    navData.errorTimer = setTimeout(() => {
+        removeError()
+        render()
+    }, 2500)
+    navElements.input.value = ""
+    navData.selectedIndex = 0
+    navData.inputText = getInputText()
+    updateEligible()
+
+}
+
+function removeError() {
+    clearTimeout(navData.errorTimer)
+    navData.errorMessage = null
+    navData.errorTimer = null
 }
 
 // ---------- CLICK FUNCTIONS ---------- //
@@ -143,8 +171,15 @@ function renderItems(selected) {
 }
 
 function renderGhost(selected) {
-    if (selected) {
+    if (navData.errorMessage != null) {
+        navElements.beforeCursor.textContent = ""
+        navElements.textCursor.textContent = ""
+        navElements.afterCursor.textContent = ""
+        navElements.error.textContent = navData.errorMessage
+    }
+    else if (selected) {
         navElements.beforeCursor.textContent = navData.inputText
+        navElements.error.textContent = ""
         if (navData.inputText.length >= selected.dataset.page.length) {
             navElements.textCursor.textContent = "\u00A0"
             navElements.afterCursor.textContent = ""
@@ -158,6 +193,7 @@ function renderGhost(selected) {
         navElements.beforeCursor.textContent = navData.inputText
         navElements.textCursor.textContent = "\u00A0"
         navElements.afterCursor.textContent = ""
+        navElements.error.textContent = ""
     }
 }
 
