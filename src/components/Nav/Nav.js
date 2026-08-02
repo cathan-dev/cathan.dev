@@ -22,6 +22,7 @@ const navData = {
 function inputHandler() {
     removeError()
     navData.selectedIndex = 0
+    navElements.textCursor.getAnimations().forEach(a => a.currentTime = 0)
     navData.inputText = getInputText()
     updateEligible()
     render()
