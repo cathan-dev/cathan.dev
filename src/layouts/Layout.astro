@@ -1,18 +1,21 @@
 ---
-import '../styles/global.css'
-import Nav from '../components/Nav/Nav.astro'
+import "../styles/global.css";
+import Nav from "../components/Nav/Nav.astro";
 
-const { title } = Astro.props
+const { title } = Astro.props;
 ---
 
-<!DOCTYPE html>
-
-
+<!doctype html>
 <html lang="en">
-
     <head>
         <title>{title}</title>
-        <link rel="preload" as="font" type="font/woff2" href="/fonts/DepartureMono-Regular.woff2" crossorigin>
+        <link
+            rel="preload"
+            as="font"
+            type="font/woff2"
+            href="/fonts/DepartureMono-Regular.woff2"
+            crossorigin
+        />
     </head>
 
     <body>
