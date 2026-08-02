@@ -1,52 +1,32 @@
 ---
 import "./Nav.css";
+import { pages } from "../../data/nav-pages.js";
 ---
 
 <nav>
     <div class="nav-container">
         <ul class="nav-list">
-            <li class="nav-list-item">
-                <a href="/help/" class="nav-link" data-page="help">
-                    <span class="nav-link-text"
-                        >[ help<span class="nav-link-closer">]</span></span
-                    >
-                </a>
-            </li>
-            <li class="nav-list-item">
-                <a href="/" class="nav-link" data-page="home">
-                    <span class="nav-link-text"
-                        >[ home<span class="nav-link-closer">]</span></span
-                    >
-                </a>
-            </li>
-            <li class="nav-list-item">
-                <a href="/now/" class="nav-link" data-page="now">
-                    <span class="nav-link-text"
-                        >[ now<span class="nav-link-closer">]</span></span
-                    >
-                </a>
-            </li>
-            <li class="nav-list-item">
-                <a href="/projects/" class="nav-link" data-page="projects">
-                    <span class="nav-link-text"
-                        >[ projects<span class="nav-link-closer">]</span></span
-                    >
-                </a>
-            </li>
-            <li class="nav-list-item">
-                <a href="/shelf/" class="nav-link" data-page="shelf">
-                    <span class="nav-link-text"
-                        >[ shelf<span class="nav-link-closer">]</span></span
-                    >
-                </a>
-            </li>
-            <li class="nav-list-item">
-                <a href="/updates/" class="nav-link" data-page="updates">
-                    <span class="nav-link-text"
-                        >[ updates<span class="nav-link-closer">]</span></span
-                    >
-                </a>
-            </li>
+            {
+                pages.map((page) => (
+                    <li class="nav-list-item">
+                        <a
+                            aria-current={
+                                page.href === Astro.url.pathname
+                                    ? "page"
+                                    : undefined
+                            }
+                            class="nav-link"
+                            href={page.href}
+                            data-page={page.slug}
+                        >
+                            <span class="nav-link-text">
+                                {"[ " + page.slug}
+                                <span class="nav-link-closer">]</span>
+                            </span>
+                        </a>
+                    </li>
+                ))
+            }
         </ul>
         <div class="nav-input-container">
             <span class="nav-prompt">[</span>
