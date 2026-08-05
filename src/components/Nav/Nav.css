@@ -1,55 +1,86 @@
 /* ---------- NAV ---------- */
 
-nav {
-    position: fixed;
-    left: 1.5em;
-    bottom: 1em;
+.nav-container {
+    margin-inline: auto;
 }
 
-.nav-container {
-    position: relative;
+/* --- nav: flavour --- */
+
+.nav-flavour {
+    display: none;
+}
+
+.nav-title {
+    margin-block: 1ch;
+}
+
+.nav-live {
+    display: grid;
+    grid-template-columns: 16ch 14ch;
+    margin-left: 1ch;
+}
+
+.nav-live-label {
+    margin: 0;
+    color: var(--muted);
+}
+
+.nav-live-talking {
+    margin: 0;
+    color: var(--voice);
+}
+
+.nav-live-value {
+    margin: 0;
+    color: var(--text);
 }
 
 /* --- nav: list --- */
 
 .nav-list {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    gap: 1ch;
     padding: 0;
     margin: 0;
+
     list-style: none;
+}
+
+.nav-list-item {
+    background-color: var(--interaction);
 }
 
 .nav-link {
     text-decoration: none;
     display: block;
-}
-
-.nav-link-text {
-    background-color: var(--bg);
+    padding-block: 0.25em;
     color: var(--text);
 }
 
-.nav-link-closer {
-    color: var(--bg);
-    padding-left: 1ch;
+.nav-link-text {
+    background-color: var(--interaction);
+    color: var(--interaction);
+    padding-right: 1ch;
 }
 
-.nav-link:hover .nav-link-text {
+.nav-link-slug {
     color: var(--bg);
-    background-color: var(--text);
 }
 
 .nav-link:focus-visible {
     outline: 2px solid transparent;
 }
 
-.nav-link:focus-visible span {
-    color: var(--bg);
-    background-color: var(--text);
-}
-
 /* --- nav: terminal --- */
+
+.nav-terminal {
+    display: none;
+    position: relative;
+}
 
 .nav-input-container {
     display: flex;
@@ -63,7 +94,7 @@ nav {
 
 .nav-input {
     font: inherit;
-    background-color: inherit;
+    background-color: transparent;
     color: inherit;
     border: 0;
     padding: 0;
@@ -79,7 +110,7 @@ nav {
     align-items: baseline;
     gap: 1ch;
     position: absolute;
-    inset-block-end: 0;
+    inset: 0;
     pointer-events: none;
 }
 
@@ -111,8 +142,6 @@ nav {
 }
 
 .nav-container:has(.nav-input:focus) .nav-text-cursor {
-    background-color: var(--text);
-    color: var(--bg);
     animation: cursor-blink 1.5s step-end infinite;
 }
 
@@ -124,7 +153,56 @@ nav {
 
 /* ---------- STATE ---------- */
 
-.nav-container:has(.nav-input:focus) .is-selected .nav-link-text {
+.nav-container:has(.nav-input:focus) .is-selected .nav-link-text,
+.nav-container:has(.nav-input:focus) .is-selected .nav-link-slug,
+.nav-container:has(.nav-input:focus) .nav-text-cursor,
+.nav-link:focus-visible span,
+.nav-link:hover span {
     background-color: var(--text);
     color: var(--bg);
+}
+
+.is-hidden {
+    display: none;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+/* Make sure to change on all files if you touch the px width */
+@media (min-width: 1120px) and (pointer: fine) {
+    .nav-container {
+        margin-top: auto;
+        margin-inline: 0;
+    }
+
+    .nav-list {
+        flex-direction: column;
+        justify-content: normal;
+        gap: 0;
+    }
+
+    .nav-link {
+        padding-block: 0;
+    }
+
+    .nav-list-item {
+        background-color: var(--bg);
+    }
+
+    .nav-link-text {
+        background-color: var(--bg);
+        color: var(--bg);
+    }
+
+    .nav-link-slug {
+        color: var(--text);
+    }
+
+    .nav-flavour {
+        display: block;
+    }
+
+    .nav-terminal {
+        display: block;
+    }
 }

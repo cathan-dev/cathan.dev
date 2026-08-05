@@ -1,5 +1,6 @@
 // ---------- CONSTANTS ---------- //
 
+// Make sure these classes all exist in the HTML
 const navElements = {
     input: document.getElementById("nav-input"),
     listLinks: document.querySelectorAll(".nav-link"),

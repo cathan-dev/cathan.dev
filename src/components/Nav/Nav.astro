@@ -1,9 +1,32 @@
 ---
 import "./Nav.css";
 import { pages } from "../../data/nav-pages.js";
+import { getCollection } from "astro:content";
+
+const shelfEntries = await getCollection("shelf");
 ---
 
 <nav>
+    <div class="nav-flavour">
+        <p class="nav-title">─ cathan.dev ─────────────────</p>
+        <div class="nav-live">
+            <p class="nav-live-label">last updated</p>
+            <p class="nav-live-value">0d</p>
+            <p class="nav-live-label">shelf</p>
+            <p class="nav-live-value">{shelfEntries.length}</p>
+            <p class="nav-live-label">projects</p>
+            <p class="nav-live-value">0 #bum</p>
+            <p class="nav-live-label">reading</p>
+            <p class="nav-live-talking">The Climber</p>
+            <!-- might make the colour amber -->
+            <p class="nav-live-label">watching</p>
+            <p class="nav-live-value">N/A</p>
+            <!-- might make the colour amber -->
+            <p class="nav-live-label">building</p>
+            <p class="nav-live-value">this website</p>
+            <!-- could be a link in future when I have a project -->
+        </div>
+    </div>
     <div class="nav-container">
         <ul class="nav-list">
             {
@@ -20,35 +43,38 @@ import { pages } from "../../data/nav-pages.js";
                             data-page={page.slug}
                         >
                             <span class="nav-link-text">
-                                {"[ " + page.slug}
-                                <span class="nav-link-closer">]</span>
+                                {"> "}
+                                <span class="nav-link-slug">{page.slug}</span>
+                                {"\u00A0"}
                             </span>
                         </a>
                     </li>
                 ))
             }
         </ul>
-        <div class="nav-input-container">
-            <span class="nav-prompt">[</span>
-            <input
-                id="nav-input"
-                class="nav-input"
-                autocomplete="off"
-                autocapitalize="off"
-                spellcheck="false"
-                aria-label="Type to navigate pages"
-                autocorrect="off"
-            />
-        </div>
-        <div class="nav-search-overlay-container">
-            <span class="nav-prompt">[</span>
-            <p class="nav-overlay-text">
-                <span class="nav-before-cursor"></span><span
-                    class="nav-text-cursor"></span><span
-                    class="nav-after-cursor"></span><span
-                    class="nav-error"
-                    aria-live="polite"></span>
-            </p>
+        <div class="nav-terminal">
+            <div class="nav-input-container">
+                <span class="nav-prompt">[</span>
+                <input
+                    id="nav-input"
+                    class="nav-input"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    aria-label="Type to navigate pages"
+                    autocorrect="off"
+                />
+            </div>
+            <div class="nav-search-overlay-container">
+                <span class="nav-prompt">[</span>
+                <p class="nav-overlay-text">
+                    <span class="nav-before-cursor"></span><span
+                        class="nav-text-cursor"></span><span
+                        class="nav-after-cursor"
+                    ></span><!-- can't remove nav-after-cursor class -->
+                    <span class="nav-error" aria-live="polite"></span>
+                </p>
+            </div>
         </div>
     </div>
 </nav>
