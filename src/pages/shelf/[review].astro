@@ -1,0 +1,28 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import { render } from "astro:content";
+
+export async function getStaticPaths() {
+    const entries = await getCollection(
+        "shelf",
+        ({ data }) => data.format === "long",
+    );
+    return entries.map((entry) => {
+        return {
+            params: { review: entry.id },
+            props: { entry },
+        };
+    });
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Layout title="review - cathan.dev">
+    <div class="prose">
+        <h1>{entry.data.title}</h1>
+        <Content />
+    </div>
+</Layout>

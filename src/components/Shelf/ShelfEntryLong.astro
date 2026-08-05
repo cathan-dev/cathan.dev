@@ -1,0 +1,8 @@
+---
+import "./Shelf.css";
+const { entry } = Astro.props;
+---
+
+<li>
+    <h2><a href={`/shelf/${entry.id}/`}>{entry.data.title}</a></h2>
+</li>
