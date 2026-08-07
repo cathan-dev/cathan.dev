@@ -8,4 +8,4 @@ verdict: essential
 relationships: [formative]
 ---
 
-This is a test. I love aot.
+This is a test. I love aot. I will definitely write more in a bit but this is just something for designing and formatting my shelf. 
