@@ -21,8 +21,8 @@ const { Content } = await render(entry);
 ---
 
 <Layout title="review - cathan.dev">
+    <h1 slot="title">{entry.data.title}</h1>
     <div class="prose">
-        <h1>{entry.data.title}</h1>
         <Content />
     </div>
 </Layout>

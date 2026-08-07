@@ -3,22 +3,24 @@
 :root {
     color-scheme: dark;
 
-    --bg: #0C0F17;
+    --bg: #0F0F0F;
     /* page background */
-    --surface: #232936;
+    --surface: #202020;
     /* panels ONLY, never a state */
-    --rule: #3C4251;
+    --rule: #353535;
     /* hairlines, dividers */
-    --muted: #949FB6;
+    --muted: #9E9E9E;
     /* secondary text, metadata, status */
-    --text: #D6DBE6;
+    --text: #DBDBDB;
     /* body text */
 
-    --interaction: #3BCDDC;
+    --interaction: #00FFFF;
     /* links, prompt, cursor */
-    --voice: #E1AD57;
+    --voice: #FF00FF;
     /* verdicts, emphasis — me talking */
-    --mark: #D25BCB;
+    --mark: #FFFF00;
+    /* smtn else */
+    --danger: #FE2736;
     /* backgrounds only, --bg text on top */
 
     --nav-width: 32ch;
@@ -59,10 +61,36 @@ body {
     min-height: 100dvh;
 }
 
+.titlebar {
+    display: flex;
+    align-items: center;
+    background-color: var(--surface);
+}
+
+.titlebar h1 {
+    margin: 0;
+    padding-inline: 1ch;
+    padding-block: 0.5ch;
+    font-size: 22px;
+    color: var(--mark);
+}
+
+.info-button {
+    margin-inline-start: auto;
+    margin-inline-end: 2ch;
+    border: none;
+    background: none;
+    font: inherit;
+    color: var(--muted);
+}
+
+.info-button span {
+    color: var(--interaction);
+}
+
 main {
-    max-width: 67ch;
-    padding: 1ch;
-    margin-inline: auto;
+    max-width: 100ch;
+    margin: 1ch;
     flex: 1;
 }
 
@@ -74,6 +102,10 @@ nav {
 
     bottom: 0;
     padding: 1ch;
+}
+
+.prose {
+    max-width: 65ch;
 }
 
 h1 {
@@ -94,12 +126,26 @@ a {
 
 /* ---------- STATE ---------- */
 
+.info-button:hover {
+    color: var(--interaction);
+}
+
+.info-button:focus-visible {
+    outline: auto;
+    outline-color: var(--interaction);
+}
+
+
 /* ---------- RESPONSIVE ---------- */
 
 /* Make sure to change on all files if you touch the px width */
 @media (min-width: 1120px) and (pointer: fine) {
     main {
         margin-inline-start: calc(var(--nav-width) + var(--gutter));
+    }
+
+    .titlebar {
+        margin-inline-start: var(--nav-width);
     }
 
     nav {
@@ -110,7 +156,7 @@ a {
         width: var(--nav-width);
         top: 0;
         left: 0;
-        box-shadow: 2px 0 0 var(--rule);
+        box-shadow: 2px 0 0 var(--surface);
 
         flex-direction: column;
     }
