@@ -3,6 +3,12 @@ import "./Shelf.css";
 const { entry } = Astro.props;
 ---
 
-<li>
-    <h2><a href={`/shelf/${entry.id}/`}>{entry.data.title}</a></h2>
+<li class="shelf-entry-long">
+    <a href={`/shelf/${entry.id}/`} class="shelf-card">
+        <p class="shelf-card-pointer" aria-hidden="true"></p>
+        <h2 class="shelf-card-title"><span>{entry.data.title}</span></h2>
+        <p class="shelf-card-hook">{entry.data.hook}</p>
+        <p class="shelf-card-verdict">{entry.data.verdict}</p>
+        <p class="shelf-card-medium">{entry.data.medium}</p>
+    </a>
 </li>

@@ -5,9 +5,17 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 ---
 
-<li>
-    <div class="prose">
-        <h2>{entry.data.title}</h2>
-        <Content />
-    </div>
+<li class="shelf-entry-short">
+    <details>
+        <summary class="shelf-card">
+            <p class="shelf-card-pointer" aria-hidden="true"></p>
+            <h2 class="shelf-card-title">{entry.data.title}</h2>
+            <p class="shelf-card-hook">{entry.data.hook}</p>
+            <p class="shelf-card-verdict">{entry.data.verdict}</p>
+            <p class="shelf-card-medium">{entry.data.medium}</p>
+        </summary>
+        <div class="shelf-dropdown prose">
+            <Content class="shelf-dropdown-content" />
+        </div>
+    </details>
 </li>
