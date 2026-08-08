@@ -39,7 +39,7 @@
     align-items: baseline;
 }
 
-.shelf-card-title span {
+.shelf-entry-long .shelf-card-title span {
     text-decoration: underline;
     text-underline-offset: 6px;
 }
