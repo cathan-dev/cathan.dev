@@ -2,11 +2,13 @@
 
 // Make sure these classes all exist in the HTML
 const navElements = {
+    listLinks: [...document.querySelectorAll(".nav-link")].reverse(),
     input: document.getElementById("nav-input"),
-    listLinks: document.querySelectorAll(".nav-link"),
     beforeCursor: document.querySelector(".nav-before-cursor"),
     textCursor: document.querySelector(".nav-text-cursor"),
     afterCursor: document.querySelector(".nav-after-cursor"),
+    pathReal: document.querySelector(".nav-path-text-real"),
+    pathPreview: document.querySelector(".nav-path-text-preview"),
     error: document.querySelector(".nav-error")
 }
 
@@ -34,12 +36,44 @@ function getInputText() {
 }
 
 function updateEligible() {
-    navData.listEligible = [...navElements.listLinks].filter((link) => matchLinkText(link.dataset.page))
+    navData.listEligible = navElements.listLinks.filter((link) => matchLinkText(link.dataset.page, navData.inputText))
 }
 
-function matchLinkText(page) {
-    return page.toLowerCase().startsWith(navData.inputText.toLowerCase())
+function matchLinkText(page, input) {
+    return page.toLowerCase().startsWith(input.toLowerCase())
 }
+
+// ---------- PATH AND PREVIEW FUNCTIONS ---------- //
+
+function writePathOnStartup() {
+    const actualLocation = getActualLocation()
+    navElements.pathReal.textContent = "~" + actualLocation
+}
+
+function getActualLocation() {
+    return serializePathData(parsePathData(window.location.pathname, window.location.search))
+}
+
+function parsePathData(pathName, search) {
+    if (search === "") {
+        return { page: pathName, filters: {} }
+    }
+    let searchParams = new URLSearchParams(search)
+    let paramObject = {}
+    for (const [key, value] of searchParams) {
+        paramObject[key] = value
+    }
+    return { page: pathName, filters: paramObject }
+}
+
+function serializePathData(components) {
+    let fullPath = components.page
+    if (Object.keys(components.filters).length > 0) {
+        fullPath += ("?" + new URLSearchParams(components.filters).toString())
+    }
+    return fullPath
+}
+
 
 // ---------- KEYDOWN FUNCTIONS ---------- //
 
@@ -104,18 +138,18 @@ function tabKeydownHandler() {
 
 function upKeydownHandler() {
     if (navData.listEligible.length > 0) {
-        navData.selectedIndex -= 1
-        if (navData.selectedIndex < 0) {
-            navData.selectedIndex = navData.listEligible.length - 1
+        navData.selectedIndex += 1
+        if (navData.selectedIndex >= navData.listEligible.length) {
+            navData.selectedIndex = 0
         }
     }
 }
 
 function downKeydownHandler() {
     if (navData.listEligible.length > 0) {
-        navData.selectedIndex += 1
-        if (navData.selectedIndex >= navData.listEligible.length) {
-            navData.selectedIndex = 0
+        navData.selectedIndex -= 1
+        if (navData.selectedIndex < 0) {
+            navData.selectedIndex = navData.listEligible.length - 1
         }
     }
 }
@@ -199,10 +233,37 @@ function renderGhost(selected) {
     }
 }
 
+// ---------- ASSERTS ---------- //
+
+function runAsserts() {
+    console.assert(serializePathData(parsePathData("/", "")) === "/", "assert 1")
+    console.assert(serializePathData(parsePathData("/shelf/", "")) === "/shelf/", "assert 2")
+    console.assert(serializePathData(parsePathData("/shelf/", "?medium=manga")) === "/shelf/?medium=manga", "assert 3")
+    console.assert(serializePathData(parsePathData("/shelf/", "?medium=manga&verdict=essential")) === "/shelf/?medium=manga&verdict=essential", "assert 4")
+    console.assert(serializePathData(parsePathData("/shelf/", "?medium=manga&medium=anime")) === "/shelf/?medium=anime", "assert 5")
+    console.assert(serializePathData(parsePathData("/shelf/", "?q=hello%20world")) === "/shelf/?q=hello+world", "assert 6")
+
+    console.assert(parsePathData("/shelf/", "?medium=manga").page === "/shelf/", "assert 7")
+    console.assert(parsePathData("/shelf/", "?medium=manga").filters.medium === "manga", "assert 8")
+    console.assert(Object.keys(parsePathData("/shelf/", "").filters).length === 0, "assert 9")
+
+    console.assert(matchLinkText("shelf", "sh") === true, "assert 10")
+    console.assert(matchLinkText("shelf", "SH") === true, "assert 11")
+    console.assert(matchLinkText("shelf", "") === true, "assert 12")
+    console.assert(matchLinkText("shelf", "elf") === false, "assert 13")
+
+}
+
 // ---------- MAIN ---------- //
 
 function main() {
+    if (import.meta.env.DEV) {
+        runAsserts()
+    }
+
     inputHandler()
+
+    writePathOnStartup()
 
     navElements.input.addEventListener("input", (e) => {
         inputHandler()

@@ -12,15 +12,25 @@
 
 .nav-title {
     margin-block: 1ch;
+    color: var(--text);
+}
+
+.nav-title span {
+    color: var(--mark);
 }
 
 .nav-live {
     display: grid;
-    grid-template-columns: 16ch 14ch;
+    grid-template-columns: 14ch 16ch;
     margin-left: 1ch;
 }
 
 .nav-live-label {
+    margin: 0;
+    color: var(--text);
+}
+
+.nav-live-value {
     margin: 0;
     color: var(--muted);
 }
@@ -30,17 +40,19 @@
     color: var(--voice);
 }
 
-.nav-live-value {
+.nav-live-link {
     margin: 0;
-    color: var(--text);
+    color: var(--interaction);
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 /* --- nav: list --- */
 
 .nav-list {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: row-reverse;
+    flex-wrap: wrap-reverse;
     justify-content: center;
 
     gap: 1ch;
@@ -137,7 +149,7 @@
 }
 
 .nav-error {
-    background-color: var(--mark);
+    background-color: var(--danger);
     color: var(--bg);
 }
 
@@ -149,6 +161,25 @@
     .nav-container:has(.nav-input:focus) .nav-text-cursor {
         animation: none;
     }
+}
+
+/* --- nav: preview --- */
+
+.nav-path {
+    display: none;
+    color: var(--text);
+}
+
+.nav-path-text {
+    margin: 0;
+}
+
+.nav-path-text-real {
+    color: var(--mark);
+}
+
+.nav-path-text-preview {
+    color: var(--muted);
 }
 
 /* ---------- STATE ---------- */
@@ -203,6 +234,10 @@
     }
 
     .nav-terminal {
+        display: block;
+    }
+
+    .nav-path {
         display: block;
     }
 }

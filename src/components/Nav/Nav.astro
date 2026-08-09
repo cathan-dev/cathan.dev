@@ -4,11 +4,12 @@ import { pages } from "../../data/nav-pages.js";
 import { getCollection } from "astro:content";
 
 const shelfEntries = await getCollection("shelf");
+const pathName = Astro.url.pathname;
 ---
 
 <nav>
-    <div class="nav-flavour">
-        <p class="nav-title">─ cathan.dev ─────────────────</p>
+    <div class="nav-flavour" aria-hidden="true">
+        <p class="nav-title">─ <span>cathan.dev</span> ─────────────────</p>
         <div class="nav-live">
             <p class="nav-live-label">last updated</p>
             <p class="nav-live-value">0d</p>
@@ -17,20 +18,20 @@ const shelfEntries = await getCollection("shelf");
             <p class="nav-live-label">projects</p>
             <p class="nav-live-value">0 #bum</p>
             <p class="nav-live-label">reading</p>
-            <p class="nav-live-talking">The Climber</p>
+            <p class="nav-live-talking">The Three Musketeers</p>
             <!-- might make the colour amber -->
             <p class="nav-live-label">watching</p>
-            <p class="nav-live-value">N/A</p>
+            <p class="nav-live-value">nothin</p>
             <!-- might make the colour amber -->
             <p class="nav-live-label">building</p>
-            <p class="nav-live-value">this website</p>
+            <a href="/" class="nav-live-link">this website</a>
             <!-- could be a link in future when I have a project -->
         </div>
     </div>
     <div class="nav-container">
         <ul class="nav-list">
             {
-                pages.map((page) => (
+                pages.toReversed().map((page) => (
                     <li class="nav-list-item">
                         <a
                             aria-current={
@@ -75,6 +76,12 @@ const shelfEntries = await getCollection("shelf");
                     <span class="nav-error" aria-live="polite"></span>
                 </p>
             </div>
+        </div>
+        <div class="nav-path">
+            <p class="nav-path-text">
+                → <span class="nav-path-text-real">{"~" + pathName}</span><span
+                    class="nav-path-text-preview"></span>
+            </p>
         </div>
     </div>
 </nav>
