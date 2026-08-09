@@ -55,8 +55,16 @@
 .shelf-card-hook {
     margin: 0;
     margin-right: 1ch;
-    color: var(--voice);
+    color: var(--muted);
     grid-area: hook;
+}
+
+.shelf-card-hook::before {
+    content: "\201C";
+}
+
+.shelf-card-hook::after {
+    content: "\201D";
 }
 
 .shelf-card-verdict {
