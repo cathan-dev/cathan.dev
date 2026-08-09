@@ -25,6 +25,8 @@
 
     --nav-width: 32ch;
     --gutter: 1ch;
+
+    --glow: 0 0 2px currentColor;
 }
 
 /* ---------- FONTS ---------- */
@@ -45,6 +47,11 @@
 }
 
 /* ---------- BASE ---------- */
+
+::selection {
+    color: var(--bg);
+    background-color: var(--mark);
+}
 
 body {
     display: flex;
@@ -111,11 +118,13 @@ nav {
 h1 {
     font-weight: normal;
     font-size: 44px;
+    text-shadow: var(--glow);
 }
 
 h2 {
     font-weight: normal;
     font-size: 33px;
+    text-shadow: var(--glow);
 }
 
 a {

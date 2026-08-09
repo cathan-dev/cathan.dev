@@ -13,6 +13,7 @@
 .nav-title {
     margin-block: 1ch;
     color: var(--text);
+    text-shadow: var(--glow);
 }
 
 .nav-title span {
