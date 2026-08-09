@@ -92,6 +92,7 @@
 .nav-terminal {
     display: none;
     position: relative;
+    margin-block: 0.5ch;
 }
 
 .nav-input-container {
