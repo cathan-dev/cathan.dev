@@ -1,8 +1,9 @@
 ---
 import "./Nav.css";
-import { pages } from "../../data/nav-pages.js";
+import { candidatesFor } from "../../data/nav-candidates.js";
 import { getCollection } from "astro:content";
 
+const candidates = candidatesFor(Astro.url.pathname);
 const shelfEntries = await getCollection("shelf");
 const pathName = Astro.url.pathname;
 ---
@@ -31,7 +32,7 @@ const pathName = Astro.url.pathname;
     <div class="nav-container">
         <ul class="nav-list">
             {
-                pages.toReversed().map((page) => (
+                candidates.toReversed().map((page) => (
                     <li class="nav-list-item">
                         <a
                             aria-current={
@@ -62,7 +63,7 @@ const pathName = Astro.url.pathname;
                     autocomplete="off"
                     autocapitalize="off"
                     spellcheck="false"
-                    aria-label="Type to navigate pages"
+                    aria-label="Type to navigate candidates"
                     autocorrect="off"
                 />
             </div>

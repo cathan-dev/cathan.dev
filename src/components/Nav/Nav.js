@@ -17,7 +17,8 @@ const navData = {
     listEligible: [...navElements.listLinks],
     selectedIndex: 0,
     errorMessage: null,
-    errorTimer: null
+    errorTimer: null,
+    actualLocation: "",
 }
 
 // ---------- INPUT FUNCTIONS ---------- //
@@ -43,11 +44,17 @@ function matchLinkText(page, input) {
     return page.toLowerCase().startsWith(input.toLowerCase())
 }
 
-// ---------- PATH AND PREVIEW FUNCTIONS ---------- //
+// ---------- PATH FUNCTIONS ---------- //
 
-function writePathOnStartup() {
-    const actualLocation = getActualLocation()
-    navElements.pathReal.textContent = "~" + actualLocation
+function buildDestination(actual, buffer) {
+    if (buffer === "") {
+        return actual
+    }
+    return actual + buffer + "/"
+}
+
+function storeActualLocation() {
+    navData.actualLocation = getActualLocation()
 }
 
 function getActualLocation() {
@@ -72,6 +79,14 @@ function serializePathData(components) {
         fullPath += ("?" + new URLSearchParams(components.filters).toString())
     }
     return fullPath
+}
+
+function splitDestination(actual, destination) {
+    let border = 0
+    while (border < destination.length && actual[border] === destination[border]) {
+        border += 1
+    }
+    return { kept: destination.substring(0, border), pending: destination.substring(border) }
 }
 
 
@@ -121,12 +136,10 @@ function keydownHandler(e) {
 }
 
 function enterKeydownHandler() {
-    if (navData.listEligible.length > 0) {
-        window.location.assign(navData.listEligible[navData.selectedIndex].href)
+    if (navData.inputText === "") {
+        return
     }
-    else {
-        setError()
-    }
+    window.location.assign(buildDestination(navData.actualLocation, navData.inputText))
 }
 
 function tabKeydownHandler() {
@@ -153,7 +166,7 @@ function downKeydownHandler() {
         }
     }
 }
-
+// YES THIS WILL BE FOR COMMANDS LATER DON'T WORRY
 function setError() {
     navData.errorMessage = navData.inputText + ": not found"
     navData.errorTimer = setTimeout(() => {
@@ -197,6 +210,7 @@ function render() {
     const selected = navData.listEligible[navData.selectedIndex]
     renderItems(selected)
     renderGhost(selected)
+    renderLocation()
 }
 
 function renderItems(selected) {
@@ -233,6 +247,13 @@ function renderGhost(selected) {
     }
 }
 
+function renderLocation() {
+    const built = buildDestination(navData.actualLocation, navData.inputText)
+    const { kept, pending } = splitDestination(navData.actualLocation, built)
+    navElements.pathReal.textContent = "~" + kept
+    navElements.pathPreview.textContent = pending
+}
+
 // ---------- ASSERTS ---------- //
 
 function runAsserts() {
@@ -252,6 +273,25 @@ function runAsserts() {
     console.assert(matchLinkText("shelf", "") === true, "assert 12")
     console.assert(matchLinkText("shelf", "elf") === false, "assert 13")
 
+    const split1 = splitDestination("/shelf/", "/projects/")
+    console.assert(split1.kept === "/", "assert 14")
+    console.assert(split1.pending === "projects/", "assert 15")
+    const split2 = splitDestination("/", "/shelf/")
+    console.assert(split2.kept === "/", "assert 16")
+    console.assert(split2.pending === "shelf/", "assert 17")
+    const split3 = splitDestination("/shelf/", "/shelf/")
+    console.assert(split3.kept === "/shelf/", "assert 18")
+    console.assert(split3.pending === "", "assert 19")
+    const split4 = splitDestination("/", "/")
+    console.assert(split4.kept === "/", "assert 20")
+    console.assert(split4.pending === "", "assert 21")
+    const split5 = splitDestination("/shelf/?medium=manga", "/shelf/")
+    console.assert(split5.kept === "/shelf/", "assert 22")
+    console.assert(split5.pending === "", "assert 23")
+
+    console.assert(buildDestination("/", "") === "/", "assert 24")
+    console.assert(buildDestination("/", "pro") === "/pro/", "assert 25")
+    console.assert(buildDestination("/shelf/", "one-pie", "assert 26"))
 }
 
 // ---------- MAIN ---------- //
@@ -261,9 +301,9 @@ function main() {
         runAsserts()
     }
 
-    inputHandler()
+    storeActualLocation()
 
-    writePathOnStartup()
+    inputHandler()
 
     navElements.input.addEventListener("input", (e) => {
         inputHandler()
