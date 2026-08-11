@@ -1,5 +1,7 @@
 // ---------- CONSTANTS ---------- //
 
+import { parsePathData, serializePathData, splitDestination, buildDestination } from "../../lib/location.js"
+
 // Make sure these classes all exist in the HTML
 const navElements = {
     listLinks: [...document.querySelectorAll(".nav-link")].reverse(),
@@ -46,13 +48,6 @@ function matchLinkText(page, input) {
 
 // ---------- PATH FUNCTIONS ---------- //
 
-function buildDestination(actual, buffer) {
-    if (buffer === "") {
-        return actual
-    }
-    return actual + buffer + "/"
-}
-
 function storeActualLocation() {
     navData.actualLocation = getActualLocation()
 }
@@ -60,35 +55,6 @@ function storeActualLocation() {
 function getActualLocation() {
     return serializePathData(parsePathData(window.location.pathname, window.location.search))
 }
-
-function parsePathData(pathName, search) {
-    if (search === "") {
-        return { page: pathName, filters: {} }
-    }
-    let searchParams = new URLSearchParams(search)
-    let paramObject = {}
-    for (const [key, value] of searchParams) {
-        paramObject[key] = value
-    }
-    return { page: pathName, filters: paramObject }
-}
-
-function serializePathData(components) {
-    let fullPath = components.page
-    if (Object.keys(components.filters).length > 0) {
-        fullPath += ("?" + new URLSearchParams(components.filters).toString())
-    }
-    return fullPath
-}
-
-function splitDestination(actual, destination) {
-    let border = 0
-    while (border < destination.length && actual[border] === destination[border]) {
-        border += 1
-    }
-    return { kept: destination.substring(0, border), pending: destination.substring(border) }
-}
-
 
 // ---------- KEYDOWN FUNCTIONS ---------- //
 
