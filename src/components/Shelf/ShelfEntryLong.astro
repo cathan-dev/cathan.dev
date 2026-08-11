@@ -3,7 +3,11 @@ import "./Shelf.css";
 const { entry } = Astro.props;
 ---
 
-<li class="shelf-entry-long">
+<li
+    class="shelf-entry shelf-entry-long"
+    data-medium={entry.data.medium}
+    data-verdict={entry.data.verdict}
+>
     <a href={`/shelf/${entry.id}/`} class="shelf-card">
         <p class="shelf-card-pointer" aria-hidden="true"></p>
         <h2 class="shelf-card-title"><span>{entry.data.title}</span></h2>

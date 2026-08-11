@@ -5,7 +5,11 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 ---
 
-<li class="shelf-entry-short">
+<li
+    class="shelf-entry shelf-entry-short"
+    data-medium={entry.data.medium}
+    data-verdict={entry.data.verdict}
+>
     <details>
         <summary class="shelf-card">
             <p class="shelf-card-pointer" aria-hidden="true"></p>
