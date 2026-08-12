@@ -109,10 +109,15 @@
 .nav-input {
     font: inherit;
     background-color: transparent;
-    color: inherit;
+    color: transparent;
     border: 0;
     padding: 0;
     caret-color: transparent;
+}
+
+.nav-input::selection {
+    color: transparent;
+    background-color: transparent;
 }
 
 .nav-input:focus-visible {
@@ -135,7 +140,7 @@
 }
 
 .nav-before-cursor {
-    color: transparent;
+    color: var(--text);
 }
 
 @keyframes cursor-blink {

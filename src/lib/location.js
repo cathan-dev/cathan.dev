@@ -30,5 +30,11 @@ export function buildDestination(actual, buffer) {
     if (buffer === "") {
         return actual
     }
+    if (buffer.includes("?")) {
+        return actual + buffer
+    }
+    if (buffer[buffer.length - 1] === "/") {
+        return actual + buffer
+    }
     return actual + buffer + "/"
 }

@@ -1,11 +1,13 @@
 // ---------- CONSTANTS ---------- //
 
 import { parsePathData, serializePathData, splitDestination, buildDestination } from "../../lib/location.js"
+import { navCommands } from "../../data/nav-commands.js"
 
 // Make sure these classes all exist in the HTML
 const navElements = {
     listLinks: [...document.querySelectorAll(".nav-link")].reverse(),
     input: document.getElementById("nav-input"),
+    tokenText: document.querySelector(".nav-token-text"),
     beforeCursor: document.querySelector(".nav-before-cursor"),
     textCursor: document.querySelector(".nav-text-cursor"),
     afterCursor: document.querySelector(".nav-after-cursor"),
@@ -16,6 +18,7 @@ const navElements = {
 
 const navData = {
     inputText: "",
+    committedTokens: [],
     listEligible: [...navElements.listLinks],
     selectedIndex: 0,
     errorMessage: null,
@@ -56,6 +59,10 @@ function getActualLocation() {
     return serializePathData(parsePathData(window.location.pathname, window.location.search))
 }
 
+function getTokenString() {
+    return navData.committedTokens.join("") + navData.inputText
+}
+
 // ---------- KEYDOWN FUNCTIONS ---------- //
 
 function keydownHandler(e) {
@@ -65,6 +72,11 @@ function keydownHandler(e) {
         return
     }
     switch (e.key) {
+        case " ":
+            e.preventDefault()
+            spaceKeydownHandler()
+            render()
+            break
         case "Enter":
             e.preventDefault()
             enterKeydownHandler()
@@ -101,11 +113,26 @@ function keydownHandler(e) {
     }
 }
 
-function enterKeydownHandler() {
+function spaceKeydownHandler() {
     if (navData.inputText === "") {
         return
     }
-    window.location.assign(buildDestination(navData.actualLocation, navData.inputText))
+    const found = navCommands.find((command) => command.input === navData.inputText)
+    if (found === undefined) {
+        navData.committedTokens.push(navData.inputText + "/")
+    }
+    else {
+        navData.committedTokens.push(found.real)
+    }
+    navElements.input.value = ""
+    inputHandler()
+}
+
+function enterKeydownHandler() {
+    if (navData.inputText === "" && navData.committedTokens.length === 0) {
+        return
+    }
+    window.location.assign(buildDestination(navData.actualLocation, getTokenString()))
 }
 
 function tabKeydownHandler() {
@@ -187,6 +214,7 @@ function renderItems(selected) {
 }
 
 function renderGhost(selected) {
+    navElements.tokenText.textContent = navData.committedTokens.join("")
     if (navData.errorMessage != null) {
         navElements.beforeCursor.textContent = ""
         navElements.textCursor.textContent = ""
@@ -214,7 +242,7 @@ function renderGhost(selected) {
 }
 
 function renderLocation() {
-    const built = buildDestination(navData.actualLocation, navData.inputText)
+    const built = buildDestination(navData.actualLocation, getTokenString())
     const { kept, pending } = splitDestination(navData.actualLocation, built)
     navElements.pathReal.textContent = "~" + kept
     navElements.pathPreview.textContent = pending
@@ -257,7 +285,14 @@ function runAsserts() {
 
     console.assert(buildDestination("/", "") === "/", "nav assert 24")
     console.assert(buildDestination("/", "pro") === "/pro/", "nav assert 25")
-    console.assert(buildDestination("/shelf/", "one-pie", "nav assert 26"))
+    console.assert(buildDestination("/shelf/", "one-pie") === "/shelf/one-pie/", "nav assert 26")
+
+    console.assert(buildDestination("/shelf/", "?") === "/shelf/?", "assert 27")
+    console.assert(buildDestination("/shelf/", "?medium=man") === "/shelf/?medium=man", "assert 28")
+    console.assert(buildDestination("/shelf/", "../") === "/shelf/../", "assert 29")
+    console.assert(buildDestination("/shelf/", "../pro") === "/shelf/../pro/", "assert 30")
+    console.assert(buildDestination("/shelf/one-piece/", "../../") === "/shelf/one-piece/../../", "assert 31")
+    console.assert(buildDestination("/shelf/", "../?medium=man") === "/shelf/../?medium=man", "assert 32")
 }
 
 // ---------- MAIN ---------- //
