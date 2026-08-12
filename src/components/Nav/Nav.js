@@ -107,8 +107,7 @@ function keydownHandler(e) {
             break
         case "Escape":
             e.preventDefault()
-            navElements.input.blur()
-            render()
+            escapeKeydownHandler()
             break
     }
 }
@@ -159,6 +158,14 @@ function downKeydownHandler() {
         }
     }
 }
+
+function escapeKeydownHandler() {
+    navData.committedTokens = []
+    navElements.input.value = ""
+    navElements.input.blur()
+    inputHandler()
+}
+
 // YES THIS WILL BE FOR COMMANDS LATER DON'T WORRY
 function setError() {
     navData.errorMessage = navData.inputText + ": not found"
