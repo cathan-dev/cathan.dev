@@ -2,10 +2,14 @@
 import "./Nav.css";
 import { candidatesFor } from "../../data/nav-candidates.js";
 import { getCollection } from "astro:content";
+import { execSync } from "node:child_process";
 
 const candidates = candidatesFor(Astro.url.pathname);
 const shelfEntries = await getCollection("shelf");
 const pathName = Astro.url.pathname;
+const timestamp = execSync("git log -1 --format=%cI", {
+    encoding: "utf8",
+}).trim();
 ---
 
 <nav>
@@ -13,7 +17,7 @@ const pathName = Astro.url.pathname;
         <p class="nav-title">─ <span>cathan.dev</span> ─────────────────</p>
         <div class="nav-live">
             <p class="nav-live-label">last updated</p>
-            <p class="nav-live-value">0d</p>
+            <p class="nav-live-timer" data-since={timestamp}>Nd</p>
             <p class="nav-live-label">shelf</p>
             <p class="nav-live-value">{shelfEntries.length}</p>
             <p class="nav-live-label">projects</p>
@@ -90,4 +94,5 @@ const pathName = Astro.url.pathname;
 
 <script>
     import "./Nav.js";
+    import "./NavLive.js";
 </script>
