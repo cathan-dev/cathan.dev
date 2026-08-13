@@ -20,3 +20,4 @@ npm run dev
 ## Credits
 
 [Departure Mono](https://departuremono.com) (under the SIL Open Font License) made by Helena Zhang - Great font!
+404 ascii by Hayley Jane Wakenshaw
