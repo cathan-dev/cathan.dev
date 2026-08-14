@@ -151,6 +151,12 @@
     white-space: pre;
 }
 
+.nav-container:has(.nav-input:focus) .nav-overlay-text:has(.is-loaded) .nav-text-cursor {
+    background-color: var(--bg);
+    color: var(--muted);
+    animation: none;
+}
+
 .nav-before-cursor {
     color: var(--text);
 }
@@ -214,6 +220,11 @@
 
 .is-hidden {
     display: none;
+}
+
+.is-loaded {
+    background-color: var(--text);
+    color: var(--bg);
 }
 
 /* ---------- RESPONSIVE ---------- */

@@ -7,7 +7,7 @@ import { navCommands } from "../../data/nav-commands.js"
 const navElements = {
     listLinks: [...document.querySelectorAll(".nav-link")].reverse(),
     input: document.getElementById("nav-input"),
-    tokenText: document.querySelector(".nav-token-text"),
+    tokenHolder: document.querySelector(".nav-tokens"),
     beforeCursor: document.querySelector(".nav-before-cursor"),
     textCursor: document.querySelector(".nav-text-cursor"),
     afterCursor: document.querySelector(".nav-after-cursor"),
@@ -19,6 +19,7 @@ const navElements = {
 const navData = {
     inputText: "",
     committedTokens: [],
+    tokenLoaded: false,
     listEligible: [...navElements.listLinks],
     selectedIndex: 0,
     errorMessage: null,
@@ -49,20 +50,6 @@ function matchLinkText(page, input) {
     return page.toLowerCase().startsWith(input.toLowerCase())
 }
 
-// ---------- PATH FUNCTIONS ---------- //
-
-function storeActualLocation() {
-    navData.actualLocation = getActualLocation()
-}
-
-function getActualLocation() {
-    return serializePathData(parsePathData(window.location.pathname, window.location.search))
-}
-
-function getTokenString() {
-    return navData.committedTokens.join("") + navData.inputText
-}
-
 // ---------- KEYDOWN FUNCTIONS ---------- //
 
 function keydownHandler(e) {
@@ -70,6 +57,9 @@ function keydownHandler(e) {
         removeError();
         render();
         return
+    }
+    if (e.key !== "Backspace") {
+        navData.tokenLoaded = false
     }
     switch (e.key) {
         case " ":
@@ -108,6 +98,24 @@ function keydownHandler(e) {
         case "Escape":
             e.preventDefault()
             escapeKeydownHandler()
+            break
+        case "Backspace":
+            if (navData.inputText !== "") {
+                return
+            }
+            else {
+                e.preventDefault()
+                if (navData.committedTokens.length > 0) {
+                    if (!navData.tokenLoaded) {
+                        navData.tokenLoaded = true
+                    }
+                    else {
+                        navData.committedTokens.pop()
+                        navData.tokenLoaded = false
+                    }
+                }
+            }
+            render()
             break
     }
 }
@@ -166,6 +174,7 @@ function escapeKeydownHandler() {
     inputHandler()
 }
 
+// ---------- ERROR FUNCTIONS ---------- //
 // YES THIS WILL BE FOR COMMANDS LATER DON'T WORRY
 function setError() {
     navData.errorMessage = navData.inputText + ": not found"
@@ -186,6 +195,20 @@ function removeError() {
     navData.errorTimer = null
 }
 
+// ---------- PATH FUNCTIONS ---------- //
+
+function storeActualLocation() {
+    navData.actualLocation = getActualLocation()
+}
+
+function getActualLocation() {
+    return serializePathData(parsePathData(window.location.pathname, window.location.search))
+}
+
+function getTokenString() {
+    return navData.committedTokens.join("") + navData.inputText
+}
+
 // ---------- CLICK FUNCTIONS ---------- //
 
 function clickHandler() {
@@ -196,6 +219,19 @@ function clickHandler() {
 
 function focusHandler() {
     caretReposition()
+}
+
+// ---------- TOKEN FUNCTIONS ---------- //
+
+function buildTokenElements() {
+    const tokenElements = []
+    for (const token of navData.committedTokens) {
+        const tokenElement = document.createElement("span")
+        tokenElement.className = "nav-token"
+        tokenElement.textContent = token
+        tokenElements.push(tokenElement)
+    }
+    return tokenElements
 }
 
 // ---------- N/A FUNCTIONS ---------- //
@@ -209,6 +245,7 @@ function caretReposition() {
 function render() {
     const selected = navData.listEligible[navData.selectedIndex]
     renderItems(selected)
+    renderTokens()
     renderGhost(selected)
     renderLocation()
 }
@@ -220,8 +257,17 @@ function renderItems(selected) {
     })
 }
 
+function renderTokens() {
+    navElements.tokenHolder.replaceChildren(...buildTokenElements())
+    if (navElements.tokenHolder.lastElementChild === null) {
+        return
+    }
+    if (navData.tokenLoaded) {
+        navElements.tokenHolder.lastElementChild.classList.add("is-loaded")
+    }
+}
+
 function renderGhost(selected) {
-    navElements.tokenText.textContent = navData.committedTokens.join("")
     if (navData.errorMessage != null) {
         navElements.beforeCursor.textContent = ""
         navElements.textCursor.textContent = ""
