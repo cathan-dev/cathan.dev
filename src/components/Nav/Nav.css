@@ -22,7 +22,7 @@
 
 .nav-live {
     display: grid;
-    grid-template-columns: 14ch 16ch;
+    grid-template-columns: 13ch 16ch;
     margin-left: 1ch;
 }
 
@@ -33,6 +33,13 @@
 
 .nav-live-value {
     margin: 0;
+    color: var(--muted);
+}
+
+.nav-live-info {
+    font-size: 11px;
+    margin: 0;
+    grid-column: 2;
     color: var(--muted);
 }
 

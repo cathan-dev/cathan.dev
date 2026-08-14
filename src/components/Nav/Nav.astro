@@ -3,13 +3,24 @@ import "./Nav.css";
 import { candidatesFor } from "../../data/nav-candidates.js";
 import { getCollection } from "astro:content";
 import { execSync } from "node:child_process";
+import { readingProgress } from "../../data/reading-status.js";
+import { watchingProgress } from "../../data/watching-status.js";
+import { getCommitCount } from "../../lib/commits.js";
 
 const candidates = candidatesFor(Astro.url.pathname);
-const shelfEntries = await getCollection("shelf");
 const pathName = Astro.url.pathname;
+
+const shelfEntries = await getCollection("shelf");
+const sortedShelf = shelfEntries.toSorted((a, b) =>
+    b.data.date.localeCompare(a.data.date),
+);
 const timestamp = execSync("git log -1 --format=%cI", {
     encoding: "utf8",
 }).trim();
+const gitHash = execSync("git log -1 --format=%h", {
+    encoding: "utf8",
+}).trim();
+const commitCount = await getCommitCount();
 ---
 
 <nav>
@@ -18,18 +29,43 @@ const timestamp = execSync("git log -1 --format=%cI", {
         <div class="nav-live">
             <p class="nav-live-label">last updated</p>
             <p class="nav-live-timer" data-since={timestamp}>Nd</p>
+            <p class="nav-live-info">{"build " + gitHash}</p>
             <p class="nav-live-label">shelf</p>
             <p class="nav-live-value">{shelfEntries.length}</p>
+            <p class="nav-live-info">
+                {"Recent: " + sortedShelf[0].data.title}
+            </p>
             <p class="nav-live-label">projects</p>
             <p class="nav-live-value">0 #bum</p>
             <p class="nav-live-label">reading</p>
-            <p class="nav-live-talking">The Three Musketeers</p>
+            <p class="nav-live-talking">{readingProgress.title}</p>
+            <p class="nav-live-info">
+                {
+                    "p. " +
+                        readingProgress.readPages +
+                        "/" +
+                        readingProgress.totalPages
+                }
+            </p>
             <!-- might make the colour amber -->
             <p class="nav-live-label">watching</p>
-            <p class="nav-live-value">nothin</p>
+            <p class="nav-live-talking">{watchingProgress.title}</p>
+            <p class="nav-live-info">
+                {
+                    "ep. " +
+                        watchingProgress.watchedEpisodes +
+                        "/" +
+                        watchingProgress.totalEpisodes
+                }
+            </p>
             <!-- might make the colour amber -->
             <p class="nav-live-label">building</p>
             <a href="/" class="nav-live-link">this website</a>
+            {
+                commitCount !== null && (
+                    <p class="nav-live-info">{commitCount + " commits"}</p>
+                )
+            }
             <!-- could be a link in future when I have a project -->
         </div>
     </div>
