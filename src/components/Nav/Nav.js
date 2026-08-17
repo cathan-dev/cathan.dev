@@ -1,7 +1,10 @@
 // ---------- CONSTANTS ---------- //
 
-import { parsePathData, serializePathData, splitDestination, buildDestination } from "../../lib/location.js"
-import { navCommands } from "../../data/nav-commands.js"
+import { parsePathData, serializePathData, splitDestination, buildDestination, segmentContext } from "../../lib/location.js"
+import { navCommands } from "../../data/commands.js"
+import { deriveCandidates } from "../../lib/candidates.js"
+
+const navBridge = JSON.parse(document.getElementById("nav-bridge").textContent)
 
 // Make sure these classes all exist in the HTML
 const navElements = {
@@ -346,6 +349,84 @@ function runAsserts() {
     console.assert(buildDestination("/shelf/", "../pro") === "/shelf/../pro/", "assert 30")
     console.assert(buildDestination("/shelf/one-piece/", "../../") === "/shelf/one-piece/../../", "assert 31")
     console.assert(buildDestination("/shelf/", "../?medium=man") === "/shelf/../?medium=man", "assert 32")
+
+    const segment1 = segmentContext("/", [])
+    console.assert(segment1.mode === "path", "assert 33")
+    console.assert(segment1.page === "/", "assert 34")
+    console.assert(segment1.key === null, "assert 35")
+    console.assert(segment1.hasFilters === false, "assert 36")
+    const segment2 = segmentContext("/", ["shelf/"])
+    console.assert(segment2.mode === "path", "assert 37")
+    console.assert(segment2.page === "/shelf/", "assert 38")
+    console.assert(segment2.key === null, "assert 39")
+    console.assert(segment2.hasFilters === false, "assert 40")
+    const segment3 = segmentContext("/shelf/", ["../"])
+    console.assert(segment3.mode === "path", "assert 41")
+    console.assert(segment3.page === "/", "assert 42")
+    console.assert(segment3.key === null, "assert 43")
+    console.assert(segment3.hasFilters === false, "assert 44")
+    const segment4 = segmentContext("/", ["../"])
+    console.assert(segment4.mode === "path", "assert 45")
+    console.assert(segment4.page === "/", "assert 46")
+    console.assert(segment4.key === null, "assert 47")
+    console.assert(segment4.hasFilters === false, "assert 48")
+    const segment5 = segmentContext("/", ["shelf/", "?"])
+    console.assert(segment5.mode === "key", "assert 49")
+    console.assert(segment5.page === "/shelf/", "assert 50")
+    console.assert(segment5.key === null, "assert 51")
+    console.assert(segment5.hasFilters === true, "assert 52")
+    const segment6 = segmentContext("/", ["shelf/", "?", "medium="])
+    console.assert(segment6.mode === "value", "assert 53")
+    console.assert(segment6.page === "/shelf/", "assert 54")
+    console.assert(segment6.key === "medium", "assert 55")
+    console.assert(segment6.hasFilters === true, "assert 56")
+    const segment7 = segmentContext("/shelf/?medium=manga", [])
+    console.assert(segment7.mode === "path", "assert 57")
+    console.assert(segment7.page === "/shelf/", "assert 58")
+    console.assert(segment7.key === null, "assert 59")
+    console.assert(segment7.hasFilters === true, "assert 60")
+
+    const fixtureBridge = {
+        "/": { children: [{ name: "alpha", kind: "page" }, { name: "beta", kind: "page" }], facets: {} },
+        "/alpha/": { children: [{ name: "solo", kind: "entry" }], facets: { medium: { manga: 2, movie: 1 }, verdict: { good: 1 } } },
+        "/beta/": { children: [], facets: {} },
+    }
+
+    const derive1 = deriveCandidates(fixtureBridge, { mode: "path", page: "/", key: null, hasFilters: false })
+    console.assert(derive1.length === 2, "assert 61")
+    console.assert(derive1[0].name === "alpha", "assert 62")
+    console.assert(derive1[0].kind === "page", "assert 63")
+    console.assert(derive1[0].count === null, "assert 64")
+
+    const derive2 = deriveCandidates(fixtureBridge, { mode: "path", page: "/alpha/", key: null, hasFilters: false })
+    console.assert(derive2.length === 3, "assert 65")
+    console.assert(derive2[0].name === "solo" && derive2[0].kind === "entry", "assert 66")
+    console.assert(derive2[1].name === "back" && derive2[1].kind === "command", "assert 67")
+    console.assert(derive2[2].name === "filter" && derive2[2].kind === "command", "assert 68")
+
+    const derive3 = deriveCandidates(fixtureBridge, { mode: "path", page: "/beta/", key: null, hasFilters: false })
+    console.assert(derive3.length === 1, "assert 69")
+    console.assert(derive3[0].name === "back", "assert 70")
+
+    const derive4 = deriveCandidates(fixtureBridge, { mode: "path", page: "/gamma/", key: null, hasFilters: false })
+    console.assert(Array.isArray(derive4) && derive4.length === 0, "assert 71")
+
+    const derive5 = deriveCandidates(fixtureBridge, { mode: "key", page: "/alpha/", key: null, hasFilters: true })
+    console.assert(derive5.length === 2, "assert 72")
+    console.assert(derive5[0].name === "medium" && derive5[0].kind === "key" && derive5[0].count === null, "assert 73")
+    console.assert(derive5[1].name === "verdict" && derive5[1].kind === "key", "assert 74")
+
+    const derive6 = deriveCandidates(fixtureBridge, { mode: "value", page: "/alpha/", key: "medium", hasFilters: true })
+    console.assert(derive6.length === 2, "assert 75")
+    console.assert(derive6[0].name === "manga" && derive6[0].kind === "value" && derive6[0].count === 2, "assert 76")
+    console.assert(derive6[1].name === "movie" && derive6[1].kind === "value" && derive6[1].count === 1, "assert 77")
+
+    const derive7 = deriveCandidates(fixtureBridge, { mode: "value", page: "/alpha/", key: "verdict", hasFilters: true })
+    console.assert(derive7.length === 1, "assert 78")
+    console.assert(derive7[0].name === "good" && derive7[0].count === 1, "assert 79")
+
+    const derive8 = deriveCandidates(fixtureBridge, { mode: "value", page: "/alpha/", key: "bogus", hasFilters: true })
+    console.assert(Array.isArray(derive8) && derive8.length === 0, "assert 80")
 }
 
 // ---------- MAIN ---------- //

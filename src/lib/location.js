@@ -38,3 +38,30 @@ export function buildDestination(actual, buffer) {
     }
     return actual + buffer + "/"
 }
+
+export function segmentContext(actual, tokens) {
+    const actualPage = actual.split("?")[0]
+    const tokenIndex = tokens.indexOf("?")
+    if (tokenIndex === -1) {
+        const mode = "path"
+        const hasFilters = actual.includes("?")
+        const page = new URL(actualPage + tokens.join(""), "http://x").pathname
+        return { mode, page, key: null, hasFilters }
+    }
+    else {
+        const hasFilters = true
+        const pageTokens = tokens.slice(0, tokenIndex)
+        const page = new URL(actualPage + pageTokens.join(""), "http://x").pathname
+        if (tokens.at(-1) === "?") {
+            const mode = "key"
+            const key = null
+            return { mode, page, key, hasFilters }
+        }
+        else {
+            const mode = "value"
+            const key = tokens.at(-1).slice(0, -1)
+            return { mode, page, key, hasFilters }
+        }
+
+    }
+}

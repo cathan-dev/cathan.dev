@@ -1,5 +1,8 @@
 ---
 import "./Nav.css";
+import { rootChildren } from "../../data/root-children.js";
+import { pageFacets } from "../../data/page-facets.js";
+import { buildBridge } from "../../lib/bridge.js";
 import { candidatesFor } from "../../data/nav-candidates.js";
 import { getCollection } from "astro:content";
 import { execSync } from "node:child_process";
@@ -11,6 +14,9 @@ const candidates = candidatesFor(Astro.url.pathname);
 const pathName = Astro.url.pathname;
 
 const shelfEntries = await getCollection("shelf");
+
+const bridge = buildBridge(rootChildren, pageFacets, { shelf: shelfEntries });
+
 const sortedShelf = shelfEntries.toSorted((a, b) =>
     b.data.date.localeCompare(a.data.date),
 );
@@ -24,6 +30,11 @@ const commitCount = await getCommitCount();
 ---
 
 <nav>
+    <script
+        type="application/json"
+        id="nav-bridge"
+        set:html={JSON.stringify(bridge)}
+    />
     <div class="nav-flavour" aria-hidden="true">
         <p class="nav-title">─ <span>cathan.dev</span> ─────────────────</p>
         <div class="nav-live">
