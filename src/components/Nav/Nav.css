@@ -246,6 +246,40 @@
         padding-block: 0;
     }
 
+    li.nav-list-command:first-child::before,
+    li.nav-list-page:first-child::before,
+    li.nav-list-entry:first-child::before,
+    li.nav-list-key:first-child::before,
+    li.nav-list-value:first-child::before,
+    li.nav-list-command+li.nav-list-page::before,
+    li.nav-list-command+li.nav-list-entry::before {
+        display: block;
+        color: var(--rule);
+        margin-top: 0.5ch;
+    }
+
+    li.nav-list-command:first-child::before {
+        content: "─ commands ──" / "";
+    }
+
+    li.nav-list-page:first-child::before,
+    li.nav-list-command+li.nav-list-page::before {
+        content: "─ pages ──" / "";
+    }
+
+    li.nav-list-entry:first-child::before,
+    li.nav-list-command+li.nav-list-entry::before {
+        content: "─ entries ──" / "";
+    }
+
+    li.nav-list-key:first-child::before {
+        content: "─ keys ──" / "";
+    }
+
+    li.nav-list-value:first-child::before {
+        content: "─ values ──" / "";
+    }
+
     .nav-list-item {
         background-color: var(--bg);
     }

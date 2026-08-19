@@ -8,7 +8,7 @@ const navBridge = JSON.parse(document.getElementById("nav-bridge").textContent)
 
 // Make sure these classes all exist in the HTML
 const navElements = {
-    listLinks: [...document.querySelectorAll(".nav-link")].reverse(),
+    listHolder: document.querySelector(".nav-list"),
     input: document.getElementById("nav-input"),
     tokenHolder: document.querySelector(".nav-tokens"),
     beforeCursor: document.querySelector(".nav-before-cursor"),
@@ -23,7 +23,7 @@ const navData = {
     inputText: "",
     committedTokens: [],
     tokenLoaded: false,
-    listEligible: [...navElements.listLinks],
+    listEligible: [],
     selectedIndex: 0,
     errorMessage: null,
     errorTimer: null,
@@ -46,7 +46,8 @@ function getInputText() {
 }
 
 function updateEligible() {
-    navData.listEligible = navElements.listLinks.filter((link) => matchLinkText(link.dataset.page, navData.inputText))
+    const candidates = deriveCandidates(navBridge, segmentContext(navData.actualLocation, navData.committedTokens))
+    navData.listEligible = candidates.filter((candidate) => matchLinkText(candidate.name, navData.inputText))
 }
 
 function matchLinkText(page, input) {
@@ -108,17 +109,8 @@ function keydownHandler(e) {
             }
             else {
                 e.preventDefault()
-                if (navData.committedTokens.length > 0) {
-                    if (!navData.tokenLoaded) {
-                        navData.tokenLoaded = true
-                    }
-                    else {
-                        navData.committedTokens.pop()
-                        navData.tokenLoaded = false
-                    }
-                }
+                backspaceKeydownHandler()
             }
-            render()
             break
     }
 }
@@ -147,7 +139,7 @@ function enterKeydownHandler() {
 
 function tabKeydownHandler() {
     if (navData.listEligible.length > 0) {
-        navElements.input.value = navData.listEligible[navData.selectedIndex].dataset.page
+        navElements.input.value = navData.listEligible[navData.selectedIndex].name
         inputHandler()
     }
 }
@@ -174,6 +166,19 @@ function escapeKeydownHandler() {
     navData.committedTokens = []
     navElements.input.value = ""
     navElements.input.blur()
+    inputHandler()
+}
+
+function backspaceKeydownHandler() {
+    if (navData.committedTokens.length > 0) {
+        if (!navData.tokenLoaded) {
+            navData.tokenLoaded = true
+        }
+        else {
+            navData.committedTokens.pop()
+            navData.tokenLoaded = false
+        }
+    }
     inputHandler()
 }
 
@@ -224,7 +229,7 @@ function focusHandler() {
     caretReposition()
 }
 
-// ---------- TOKEN FUNCTIONS ---------- //
+// ---------- BUILD FUNCTIONS ---------- //
 
 function buildTokenElements() {
     const tokenElements = []
@@ -237,6 +242,35 @@ function buildTokenElements() {
     return tokenElements
 }
 
+function buildCandidateElements(candidate, isSelected, page) {
+    const hrefCandidate = page + candidate.name + "/"
+
+    const li = document.createElement("li")
+    li.className = (isSelected) ? "nav-list-item is-selected" : "nav-list-item"
+
+    li.classList.add("nav-list-" + candidate.kind)
+
+    const isLink = candidate.kind === "page" || candidate.kind === "entry"
+
+    const wrapper = isLink ? document.createElement("a") : document.createElement("span")
+    wrapper.className = "nav-link"
+    if (isLink) {
+        wrapper.href = hrefCandidate
+    }
+
+    const textSpan = document.createElement("span")
+    textSpan.className = "nav-link-text"
+    const slugSpan = document.createElement("span")
+    slugSpan.className = "nav-link-slug"
+    slugSpan.textContent = candidate.name
+
+    textSpan.append("> ", slugSpan, "\u00A0")
+    wrapper.appendChild(textSpan)
+    li.appendChild(wrapper)
+
+    return li
+}
+
 // ---------- N/A FUNCTIONS ---------- //
 
 function caretReposition() {
@@ -247,17 +281,16 @@ function caretReposition() {
 
 function render() {
     const selected = navData.listEligible[navData.selectedIndex]
-    renderItems(selected)
+    renderList(selected)
     renderTokens()
     renderGhost(selected)
     renderLocation()
 }
 
-function renderItems(selected) {
-    navElements.listLinks.forEach((link) => {
-        link.closest("li").classList.toggle("is-hidden", !navData.listEligible.includes(link))
-        link.closest("li").classList.toggle("is-selected", link === selected)
-    })
+function renderList(selected) {
+    const segment = segmentContext(navData.actualLocation, navData.committedTokens)
+    const candidates = navData.listEligible.toReversed().map((candidate) => buildCandidateElements(candidate, candidate === selected, segment.page))
+    navElements.listHolder.replaceChildren(...candidates)
 }
 
 function renderTokens() {
@@ -280,13 +313,13 @@ function renderGhost(selected) {
     else if (selected) {
         navElements.beforeCursor.textContent = navData.inputText
         navElements.error.textContent = ""
-        if (navData.inputText.length >= selected.dataset.page.length) {
+        if (navData.inputText.length >= selected.name.length) {
             navElements.textCursor.textContent = "\u00A0"
             navElements.afterCursor.textContent = ""
         }
         else {
-            navElements.textCursor.textContent = selected.dataset.page.charAt(navData.inputText.length)
-            navElements.afterCursor.textContent = selected.dataset.page.slice(navData.inputText.length + 1)
+            navElements.textCursor.textContent = selected.name.charAt(navData.inputText.length)
+            navElements.afterCursor.textContent = selected.name.slice(navData.inputText.length + 1)
         }
     }
     else {
