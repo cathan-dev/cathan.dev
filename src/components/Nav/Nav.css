@@ -218,6 +218,12 @@
     color: var(--bg);
 }
 
+.nav-container:has(.nav-input:focus) .is-selected .nav-link-count,
+.nav-link:focus-visible .nav-link-count,
+.nav-link:hover .nav-link-count {
+    color: var(--rule);
+}
+
 .is-hidden {
     display: none;
 }
@@ -291,6 +297,10 @@
 
     .nav-link-slug {
         color: var(--text);
+    }
+
+    .nav-link-count {
+        color: var(--muted);
     }
 
     .nav-flavour {

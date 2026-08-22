@@ -3,19 +3,21 @@ import "./Nav.css";
 import { rootChildren } from "../../data/root-children.js";
 import { pageFacets } from "../../data/page-facets.js";
 import { buildBridge } from "../../lib/bridge.js";
-import { candidatesFor } from "../../data/nav-candidates.js";
+import { deriveCandidates } from "../../lib/candidates.js";
+import { segmentContext } from "../../lib/location.js";
 import { getCollection } from "astro:content";
 import { execSync } from "node:child_process";
 import { readingProgress } from "../../data/reading-status.js";
 import { watchingProgress } from "../../data/watching-status.js";
 import { getCommitCount } from "../../lib/commits.js";
 
-const candidates = candidatesFor(Astro.url.pathname);
 const pathName = Astro.url.pathname;
 
 const shelfEntries = await getCollection("shelf");
 
 const bridge = buildBridge(rootChildren, pageFacets, { shelf: shelfEntries });
+const context = segmentContext(Astro.url.pathname, []);
+const candidates = deriveCandidates(bridge, context);
 
 const sortedShelf = shelfEntries.toSorted((a, b) =>
     b.data.date.localeCompare(a.data.date),
@@ -83,26 +85,31 @@ const commitCount = await getCommitCount();
     <div class="nav-container">
         <ul class="nav-list">
             {
-                candidates.toReversed().map((page) => (
-                    <li class="nav-list-item">
-                        <a
-                            aria-current={
-                                page.href === Astro.url.pathname
-                                    ? "page"
-                                    : undefined
-                            }
-                            class="nav-link"
-                            href={page.href}
-                            data-page={page.slug}
-                        >
-                            <span class="nav-link-text">
-                                {"> "}
-                                <span class="nav-link-slug">{page.slug}</span>
-                                {"\u00A0"}
-                            </span>
-                        </a>
-                    </li>
-                ))
+                candidates.toReversed().map((candidate) => {
+                    const isLink =
+                        candidate.kind === "page" || candidate.kind === "entry";
+                    const Wrapper = isLink ? "a" : "span";
+                    return (
+                        <li class={"nav-list-item nav-list-" + candidate.kind}>
+                            <Wrapper
+                                class="nav-link"
+                                href={
+                                    isLink
+                                        ? context.page + candidate.name + "/"
+                                        : undefined
+                                }
+                            >
+                                <span class="nav-link-text">
+                                    {"> "}
+                                    <span class="nav-link-slug">
+                                        {candidate.name}
+                                    </span>
+                                    {"\u00A0"}
+                                </span>
+                            </Wrapper>
+                        </li>
+                    );
+                })
             }
         </ul>
         <div class="nav-terminal">

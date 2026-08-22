@@ -119,13 +119,33 @@ function spaceKeydownHandler() {
     if (navData.inputText === "") {
         return
     }
-    const found = navCommands.find((command) => command.input === navData.inputText)
-    if (found === undefined) {
-        navData.committedTokens.push(navData.inputText + "/")
+    const context = segmentContext(navData.actualLocation, navData.committedTokens)
+    switch (context.mode) {
+        case "path":
+            const commandFound = navCommands.find((command) => command.input === navData.inputText)
+            if (commandFound === undefined) {
+                navData.committedTokens.push(navData.inputText + "/")
+            }
+            else {
+                navData.committedTokens.push(commandFound.real)
+            }
+            break
+
+        case "key":
+            if (navData.inputText in navBridge[context.page].facets) {
+                navData.committedTokens.push(navData.inputText + "=")
+
+            }
+            else {
+                setError()
+                return
+            }
+            break
+
+        case "value":
+            return
     }
-    else {
-        navData.committedTokens.push(found.real)
-    }
+
     navElements.input.value = ""
     inputHandler()
 }
@@ -219,8 +239,20 @@ function getTokenString() {
 
 // ---------- CLICK FUNCTIONS ---------- //
 
-function clickHandler() {
-    caretReposition()
+function clickHandler(e) {
+    if (e.target.closest("input.nav-input") !== null) {
+        caretReposition()
+        return
+    }
+    if (e.target.closest("li.nav-list-item") !== null) {
+        const element = e.target.closest("li.nav-list-item")
+        if (element.querySelector("a") === null) {
+            navElements.input.value = element.dataset.name
+            navElements.input.focus()
+            inputHandler()
+        }
+
+    }
 }
 
 // ---------- FOCUS FUNCTIONS ---------- //
@@ -249,6 +281,7 @@ function buildCandidateElements(candidate, isSelected, page) {
     li.className = (isSelected) ? "nav-list-item is-selected" : "nav-list-item"
 
     li.classList.add("nav-list-" + candidate.kind)
+    li.dataset.name = candidate.name
 
     const isLink = candidate.kind === "page" || candidate.kind === "entry"
 
@@ -263,6 +296,12 @@ function buildCandidateElements(candidate, isSelected, page) {
     const slugSpan = document.createElement("span")
     slugSpan.className = "nav-link-slug"
     slugSpan.textContent = candidate.name
+    if (candidate.count !== null) {
+        const countSpan = document.createElement("span")
+        countSpan.className = "nav-link-count"
+        countSpan.textContent = " " + candidate.count
+        slugSpan.append(countSpan)
+    }
 
     textSpan.append("> ", slugSpan, "\u00A0")
     wrapper.appendChild(textSpan)
@@ -479,11 +518,11 @@ function main() {
     navElements.input.addEventListener("keydown", (e) => {
         keydownHandler(e)
     })
-    navElements.input.addEventListener("click", (e) => {
-        clickHandler()
-    })
     navElements.input.addEventListener("focus", (e) => {
         focusHandler()
+    })
+    document.addEventListener("click", (e) => {
+        clickHandler(e)
     })
 }
 
