@@ -224,6 +224,12 @@
     color: var(--rule);
 }
 
+.nav-container:has(.nav-input:focus) .nav-text-cursor.is-illegal {
+    background-color: var(--danger);
+    color: var(--bg);
+    animation: none;
+}
+
 .is-hidden {
     display: none;
 }

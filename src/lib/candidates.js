@@ -27,7 +27,7 @@ export function deriveCandidates(bridge, context) {
             break
 
         case "value":
-            if (context.key in bridge[context.page].facets) {
+            if (hasFacet(bridge, context.page, context.key)) {
                 for (const [name, count] of Object.entries(bridge[context.page].facets[context.key])) {
                     returnArray.push({ "name": name, "kind": "value", "count": count })
                 }
@@ -38,4 +38,13 @@ export function deriveCandidates(bridge, context) {
             break
     }
     return returnArray
+}
+
+export function hasFacet(bridge, page, key) {
+    if (bridge[page] === undefined) {
+        return false
+    }
+    else {
+        return Object.hasOwn(bridge[page].facets, key)
+    }
 }

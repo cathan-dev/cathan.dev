@@ -65,3 +65,8 @@ export function segmentContext(actual, tokens) {
 
     }
 }
+
+export function isTailLegal(tail) {
+    const re = /^[a-z0-9-]*$/
+    return re.test(tail)
+}

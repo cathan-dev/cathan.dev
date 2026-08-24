@@ -1,8 +1,8 @@
 // ---------- CONSTANTS ---------- //
 
-import { parsePathData, serializePathData, splitDestination, buildDestination, segmentContext } from "../../lib/location.js"
+import { parsePathData, serializePathData, splitDestination, buildDestination, segmentContext, isTailLegal } from "../../lib/location.js"
 import { navCommands } from "../../data/commands.js"
-import { deriveCandidates } from "../../lib/candidates.js"
+import { deriveCandidates, hasFacet } from "../../lib/candidates.js"
 
 const navBridge = JSON.parse(document.getElementById("nav-bridge").textContent)
 
@@ -23,6 +23,7 @@ const navData = {
     inputText: "",
     committedTokens: [],
     tokenLoaded: false,
+    illegalInput: false,
     listEligible: [],
     selectedIndex: 0,
     errorMessage: null,
@@ -34,15 +35,27 @@ const navData = {
 
 function inputHandler() {
     removeError()
-    navData.selectedIndex = 0
-    navElements.textCursor.getAnimations().forEach(a => a.currentTime = 0)
-    navData.inputText = getInputText()
+    const inputText = getInputText()
+    if (isTailLegal(inputText)) {
+        navData.illegalInput = false
+        navData.inputText = inputText
+        navData.selectedIndex = 0
+        navElements.textCursor.getAnimations().forEach(a => a.currentTime = 0)
+    }
+    else {
+        navData.illegalInput = true
+        revertInput()
+    }
     updateEligible()
     render()
 }
 
 function getInputText() {
     return navElements.input.value
+}
+
+function revertInput() {
+    navElements.input.value = navData.inputText
 }
 
 function updateEligible() {
@@ -60,7 +73,6 @@ function keydownHandler(e) {
     if (navData.errorMessage != null) {
         removeError();
         render();
-        return
     }
     if (e.key !== "Backspace") {
         navData.tokenLoaded = false
@@ -132,12 +144,11 @@ function spaceKeydownHandler() {
             break
 
         case "key":
-            if (navData.inputText in navBridge[context.page].facets) {
+            if (hasFacet(navBridge, context.page, navData.inputText)) {
                 navData.committedTokens.push(navData.inputText + "=")
-
             }
             else {
-                setError()
+                setError("key not found")
                 return
             }
             break
@@ -154,6 +165,7 @@ function enterKeydownHandler() {
     if (navData.inputText === "" && navData.committedTokens.length === 0) {
         return
     }
+    import.meta.env.DEV && console.assert(isTailLegal(navData.inputText), "nav assert 121")
     window.location.assign(buildDestination(navData.actualLocation, getTokenString()))
 }
 
@@ -204,17 +216,13 @@ function backspaceKeydownHandler() {
 
 // ---------- ERROR FUNCTIONS ---------- //
 // YES THIS WILL BE FOR COMMANDS LATER DON'T WORRY
-function setError() {
-    navData.errorMessage = navData.inputText + ": not found"
+function setError(message) {
+    navData.errorMessage = navData.inputText + ": " + message
+    clearTimeout(navData.errorTimer)
     navData.errorTimer = setTimeout(() => {
         removeError()
         render()
     }, 2500)
-    navElements.input.value = ""
-    navData.selectedIndex = 0
-    navData.inputText = getInputText()
-    updateEligible()
-
 }
 
 function removeError() {
@@ -233,8 +241,12 @@ function getActualLocation() {
     return serializePathData(parsePathData(window.location.pathname, window.location.search))
 }
 
+function getCommittedString() {
+    return navData.committedTokens.join("")
+}
+
 function getTokenString() {
-    return navData.committedTokens.join("") + navData.inputText
+    return getCommittedString() + navData.inputText
 }
 
 // ---------- CLICK FUNCTIONS ---------- //
@@ -343,6 +355,7 @@ function renderTokens() {
 }
 
 function renderGhost(selected) {
+    navElements.textCursor.classList.toggle("is-illegal", navData.illegalInput)
     if (navData.errorMessage != null) {
         navElements.beforeCursor.textContent = ""
         navElements.textCursor.textContent = ""
@@ -499,6 +512,26 @@ function runAsserts() {
 
     const derive8 = deriveCandidates(fixtureBridge, { mode: "value", page: "/alpha/", key: "bogus", hasFilters: true })
     console.assert(Array.isArray(derive8) && derive8.length === 0, "assert 80")
+
+    console.assert(isTailLegal("") === true, "assert 102")
+    console.assert(isTailLegal("shelf") === true, "assert 103")
+    console.assert(isTailLegal("hunter-x-hunter") === true, "assert 104")
+    console.assert(isTailLegal("404") === true, "assert 105")
+    console.assert(isTailLegal("-") === true, "assert 106")
+    console.assert(isTailLegal("/shelf") === false, "assert 107")
+    console.assert(isTailLegal("/") === false, "assert 108")
+    console.assert(isTailLegal("\\shelf") === false, "assert 109")
+    console.assert(isTailLegal("a@evil.com") === false, "assert 110")
+    console.assert(isTailLegal("100%") === false, "assert 111")
+    console.assert(isTailLegal("%") === false, "assert 112")
+    console.assert(isTailLegal("shelf?") === false, "assert 113")
+    console.assert(isTailLegal("?medium") === false, "assert 114")
+    console.assert(isTailLegal("?") === false, "assert 115")
+    console.assert(isTailLegal("medium=") === false, "assert 116")
+    console.assert(isTailLegal("shelf#foo") === false, "assert 117")
+    console.assert(isTailLegal("a b") === false, "assert 118")
+    console.assert(isTailLegal("..") === false, "assert 119")
+    console.assert(isTailLegal("café") === false, "assert 120")
 }
 
 // ---------- MAIN ---------- //
