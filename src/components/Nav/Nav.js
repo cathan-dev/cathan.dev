@@ -33,7 +33,10 @@ const navData = {
 
 // ---------- INPUT FUNCTIONS ---------- //
 
-function inputHandler() {
+function inputHandler(e) {
+    if (e?.isComposing) {
+        return
+    }
     removeError()
     const inputText = getInputText()
     if (isTailLegal(inputText)) {
@@ -64,12 +67,18 @@ function updateEligible() {
 }
 
 function matchLinkText(page, input) {
-    return page.toLowerCase().startsWith(input.toLowerCase())
+    return page.startsWith(input)
 }
 
 // ---------- KEYDOWN FUNCTIONS ---------- //
 
 function keydownHandler(e) {
+    if (e.isComposing) {
+        return
+    }
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
+        return
+    }
     if (navData.errorMessage != null) {
         removeError();
         render();
@@ -261,6 +270,7 @@ function clickHandler(e) {
         if (element.querySelector("a") === null) {
             navElements.input.value = element.dataset.name
             navElements.input.focus()
+            navData.tokenLoaded = false
             inputHandler()
         }
 
@@ -404,7 +414,7 @@ function runAsserts() {
     console.assert(Object.keys(parsePathData("/shelf/", "").filters).length === 0, "nav assert 9")
 
     console.assert(matchLinkText("shelf", "sh") === true, "nav assert 10")
-    console.assert(matchLinkText("shelf", "SH") === true, "nav assert 11")
+    console.assert(matchLinkText("shelf", "SH") === false, "nav assert 11")
     console.assert(matchLinkText("shelf", "") === true, "nav assert 12")
     console.assert(matchLinkText("shelf", "elf") === false, "nav assert 13")
 
@@ -546,7 +556,7 @@ function main() {
     inputHandler()
 
     navElements.input.addEventListener("input", (e) => {
-        inputHandler()
+        inputHandler(e)
     })
     navElements.input.addEventListener("keydown", (e) => {
         keydownHandler(e)

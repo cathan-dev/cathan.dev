@@ -20,7 +20,7 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 ---
 
-<Layout title="review - cathan.dev">
+<Layout>
     <h1 slot="title">{entry.data.title}</h1>
     <div class="prose">
         <Content />

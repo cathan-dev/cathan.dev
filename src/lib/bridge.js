@@ -1,4 +1,4 @@
-import { hasOwnPage } from "./entries"
+import { hasOwnPage } from "./entries.js"
 
 function buildHomeChildren(rootChildren) {
     let bridgeChildren = []

@@ -2,8 +2,9 @@
 import "../styles/global.css";
 import Nav from "../components/Nav/Nav.astro";
 
-const { title, description = "Hal's personal site." } = Astro.props;
+const { description = "Hal's personal site." } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const title = canonical.host + canonical.pathname;
 ---
 
 <!doctype html>
@@ -17,6 +18,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
             href="/fonts/DepartureMono-Regular.woff2"
             crossorigin
         />
+        <link rel="canonical" href={canonical} />
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta property="og:title" content={title} />

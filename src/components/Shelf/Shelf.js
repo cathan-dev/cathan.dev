@@ -1,4 +1,4 @@
-import { parsePathData } from "../../lib/location"
+import { parsePathData } from "../../lib/location.js"
 
 const shelfElements = {
     entries: document.querySelectorAll(".shelf-entry"),

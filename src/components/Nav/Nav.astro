@@ -6,7 +6,7 @@ import { buildBridge } from "../../lib/bridge.js";
 import { deriveCandidates } from "../../lib/candidates.js";
 import { segmentContext } from "../../lib/location.js";
 import { getCollection } from "astro:content";
-import { execSync } from "node:child_process";
+import { tryExecSync } from "../../lib/git.js";
 import { readingProgress } from "../../data/reading-status.js";
 import { watchingProgress } from "../../data/watching-status.js";
 import { getCommitCount } from "../../lib/commits.js";
@@ -22,12 +22,9 @@ const candidates = deriveCandidates(bridge, context);
 const sortedShelf = shelfEntries.toSorted((a, b) =>
     b.data.date.localeCompare(a.data.date),
 );
-const timestamp = execSync("git log -1 --format=%cI", {
-    encoding: "utf8",
-}).trim();
-const gitHash = execSync("git log -1 --format=%h", {
-    encoding: "utf8",
-}).trim();
+
+const timestamp = tryExecSync("git log -1 --format=%cI");
+const gitHash = tryExecSync("git log -1 --format=%h");
 const commitCount = await getCommitCount();
 ---
 
@@ -40,14 +37,24 @@ const commitCount = await getCommitCount();
     <div class="nav-flavour" aria-hidden="true">
         <p class="nav-title">─ <span>cathan.dev</span> ─────────────────</p>
         <div class="nav-live">
-            <p class="nav-live-label">last updated</p>
-            <p class="nav-live-timer" data-since={timestamp}>Nd</p>
-            <p class="nav-live-info">{"build " + gitHash}</p>
+            {
+                timestamp !== null && (
+                    <>
+                        <p class="nav-live-label">last updated</p>
+                        <p class="nav-live-timer" data-since={timestamp} />
+                        <p class="nav-live-info">{"build " + gitHash}</p>
+                    </>
+                )
+            }
             <p class="nav-live-label">shelf</p>
             <p class="nav-live-value">{shelfEntries.length}</p>
-            <p class="nav-live-info">
-                {"Recent: " + sortedShelf[0].data.title}
-            </p>
+            {
+                sortedShelf.length !== 0 && (
+                    <p class="nav-live-info">
+                        {"Recent: " + sortedShelf[0].data.title}
+                    </p>
+                )
+            }
             <p class="nav-live-label">projects</p>
             <p class="nav-live-value">0 #bum</p>
             <p class="nav-live-label">reading</p>
@@ -73,7 +80,7 @@ const commitCount = await getCommitCount();
             </p>
             <!-- might make the colour amber -->
             <p class="nav-live-label">building</p>
-            <a href="/" class="nav-live-link">this website</a>
+            <a href="/" class="nav-live-link" tabindex="-1">this website</a>
             {
                 commitCount !== null && (
                     <p class="nav-live-info">{commitCount + " commits"}</p>

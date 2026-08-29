@@ -1,9 +1,6 @@
 export function parsePathData(pathName, search) {
-    if (search === "") {
-        return { page: pathName, filters: {} }
-    }
     let searchParams = new URLSearchParams(search)
-    let paramObject = {}
+    let paramObject = Object.create(null)
     for (const [key, value] of searchParams) {
         paramObject[key] = value
     }
