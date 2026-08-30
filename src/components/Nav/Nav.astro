@@ -4,19 +4,22 @@ import { rootChildren } from "../../data/root-children.js";
 import { pageFacets } from "../../data/page-facets.js";
 import { buildBridge } from "../../lib/bridge.js";
 import { deriveCandidates } from "../../lib/candidates.js";
-import { segmentContext } from "../../lib/location.js";
+import {
+    segmentContext,
+    serializePathData,
+    parsePathData,
+} from "../../lib/location.js";
 import { getCollection } from "astro:content";
 import { tryExecSync } from "../../lib/git.js";
 import { readingProgress } from "../../data/reading-status.js";
 import { watchingProgress } from "../../data/watching-status.js";
 import { getCommitCount } from "../../lib/commits.js";
 
-const pathName = Astro.url.pathname;
-
 const shelfEntries = await getCollection("shelf");
 
 const bridge = buildBridge(rootChildren, pageFacets, { shelf: shelfEntries });
-const context = segmentContext(Astro.url.pathname, []);
+const path = serializePathData(parsePathData(Astro.url.pathname, ""));
+const context = segmentContext(path);
 const candidates = deriveCandidates(bridge, context);
 
 const sortedShelf = shelfEntries.toSorted((a, b) =>
@@ -146,7 +149,7 @@ const commitCount = await getCommitCount();
         </div>
         <div class="nav-path">
             <p class="nav-path-text">
-                → <span class="nav-path-text-real">{"~" + pathName}</span><span
+                → <span class="nav-path-text-real">{"~" + path}</span><span
                     class="nav-path-text-preview"></span>
             </p>
         </div>

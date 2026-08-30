@@ -1,8 +1,8 @@
 // ---------- CONSTANTS ---------- //
 
-import { parsePathData, serializePathData, splitDestination, buildDestination, segmentContext, isTailLegal } from "../../lib/location.js"
-import { navCommands } from "../../data/commands.js"
+import { parsePathData, serializePathData, splitDestination, buildDestination, segmentContext, isTailLegal, applyToken } from "../../lib/location.js"
 import { deriveCandidates, hasFacet } from "../../lib/candidates.js"
+import { resolve } from "../../lib/resolve.js"
 
 const navBridge = JSON.parse(document.getElementById("nav-bridge").textContent)
 
@@ -62,7 +62,7 @@ function revertInput() {
 }
 
 function updateEligible() {
-    const candidates = deriveCandidates(navBridge, segmentContext(navData.actualLocation, navData.committedTokens))
+    const candidates = deriveCandidates(navBridge, segmentContext(getLevel()))
     navData.listEligible = candidates.filter((candidate) => matchLinkText(candidate.name, navData.inputText))
 }
 
@@ -140,15 +140,16 @@ function spaceKeydownHandler() {
     if (navData.inputText === "") {
         return
     }
-    const context = segmentContext(navData.actualLocation, navData.committedTokens)
+    const context = segmentContext(getLevel())
+    const command = resolve(navData.inputText, context)
+
     switch (context.mode) {
         case "path":
-            const commandFound = navCommands.find((command) => command.input === navData.inputText)
-            if (commandFound === undefined) {
+            if (command === null) {
                 navData.committedTokens.push(navData.inputText + "/")
             }
             else {
-                navData.committedTokens.push(commandFound.real)
+                navData.committedTokens.push(command)
             }
             break
 
@@ -175,7 +176,7 @@ function enterKeydownHandler() {
         return
     }
     import.meta.env.DEV && console.assert(isTailLegal(navData.inputText), "nav assert 121")
-    window.location.assign(buildDestination(navData.actualLocation, getTokenString()))
+    window.location.assign(getDestination())
 }
 
 function tabKeydownHandler() {
@@ -250,12 +251,18 @@ function getActualLocation() {
     return serializePathData(parsePathData(window.location.pathname, window.location.search))
 }
 
-function getCommittedString() {
-    return navData.committedTokens.join("")
+function getLevel() {
+    const committedString = navData.committedTokens.reduce(applyToken, navData.actualLocation)
+    return committedString
 }
 
-function getTokenString() {
-    return getCommittedString() + navData.inputText
+function getDestination() {
+    const level = getLevel()
+    const token = resolve(navData.inputText, segmentContext(level))
+    if (token === null) {
+        return buildDestination(level, navData.inputText)
+    }
+    return applyToken(level, token)
 }
 
 // ---------- CLICK FUNCTIONS ---------- //
@@ -349,7 +356,7 @@ function render() {
 }
 
 function renderList(selected) {
-    const segment = segmentContext(navData.actualLocation, navData.committedTokens)
+    const segment = segmentContext(getLevel())
     const candidates = navData.listEligible.toReversed().map((candidate) => buildCandidateElements(candidate, candidate === selected, segment.page))
     navElements.listHolder.replaceChildren(...candidates)
 }
@@ -393,7 +400,7 @@ function renderGhost(selected) {
 }
 
 function renderLocation() {
-    const built = buildDestination(navData.actualLocation, getTokenString())
+    const built = getDestination()
     const { kept, pending } = splitDestination(navData.actualLocation, built)
     navElements.pathReal.textContent = "~" + kept
     navElements.pathPreview.textContent = pending
@@ -437,49 +444,46 @@ function runAsserts() {
     console.assert(buildDestination("/", "") === "/", "nav assert 24")
     console.assert(buildDestination("/", "pro") === "/pro/", "nav assert 25")
     console.assert(buildDestination("/shelf/", "one-pie") === "/shelf/one-pie/", "nav assert 26")
+    console.assert(buildDestination("/shelf/?", "medi") === "/shelf/?medi", "nav assert 28")
+    console.assert(buildDestination("/shelf/?medium=", "mang") === "/shelf/?medium=mang", "nav assert 29")
+    console.assert(buildDestination("/shelf/?medium=manga", "one-piece") === "/shelf/one-piece/", "nav assert 30")
+    console.assert(buildDestination("/shelf/", "") === "/shelf/", "nav assert 31")
 
-    console.assert(buildDestination("/shelf/", "?") === "/shelf/?", "assert 27")
-    console.assert(buildDestination("/shelf/", "?medium=man") === "/shelf/?medium=man", "assert 28")
-    console.assert(buildDestination("/shelf/", "../") === "/shelf/../", "assert 29")
-    console.assert(buildDestination("/shelf/", "../pro") === "/shelf/../pro/", "assert 30")
-    console.assert(buildDestination("/shelf/one-piece/", "../../") === "/shelf/one-piece/../../", "assert 31")
-    console.assert(buildDestination("/shelf/", "../?medium=man") === "/shelf/../?medium=man", "assert 32")
-
-    const segment1 = segmentContext("/", [])
-    console.assert(segment1.mode === "path", "assert 33")
-    console.assert(segment1.page === "/", "assert 34")
-    console.assert(segment1.key === null, "assert 35")
-    console.assert(segment1.hasFilters === false, "assert 36")
-    const segment2 = segmentContext("/", ["shelf/"])
-    console.assert(segment2.mode === "path", "assert 37")
-    console.assert(segment2.page === "/shelf/", "assert 38")
-    console.assert(segment2.key === null, "assert 39")
-    console.assert(segment2.hasFilters === false, "assert 40")
-    const segment3 = segmentContext("/shelf/", ["../"])
-    console.assert(segment3.mode === "path", "assert 41")
-    console.assert(segment3.page === "/", "assert 42")
-    console.assert(segment3.key === null, "assert 43")
-    console.assert(segment3.hasFilters === false, "assert 44")
-    const segment4 = segmentContext("/", ["../"])
-    console.assert(segment4.mode === "path", "assert 45")
-    console.assert(segment4.page === "/", "assert 46")
-    console.assert(segment4.key === null, "assert 47")
-    console.assert(segment4.hasFilters === false, "assert 48")
-    const segment5 = segmentContext("/", ["shelf/", "?"])
-    console.assert(segment5.mode === "key", "assert 49")
-    console.assert(segment5.page === "/shelf/", "assert 50")
-    console.assert(segment5.key === null, "assert 51")
-    console.assert(segment5.hasFilters === true, "assert 52")
-    const segment6 = segmentContext("/", ["shelf/", "?", "medium="])
-    console.assert(segment6.mode === "value", "assert 53")
-    console.assert(segment6.page === "/shelf/", "assert 54")
-    console.assert(segment6.key === "medium", "assert 55")
-    console.assert(segment6.hasFilters === true, "assert 56")
-    const segment7 = segmentContext("/shelf/?medium=manga", [])
-    console.assert(segment7.mode === "path", "assert 57")
-    console.assert(segment7.page === "/shelf/", "assert 58")
-    console.assert(segment7.key === null, "assert 59")
-    console.assert(segment7.hasFilters === true, "assert 60")
+    const segment1 = segmentContext("/")
+    console.assert(segment1.mode === "path", "nav assert 33")
+    console.assert(segment1.page === "/", "nav assert 34")
+    console.assert(segment1.key === null, "nav assert 35")
+    console.assert(segment1.hasFilters === false, "nav assert 36")
+    const segment2 = segmentContext("/shelf/")
+    console.assert(segment2.mode === "path", "nav assert 37")
+    console.assert(segment2.page === "/shelf/", "nav assert 38")
+    console.assert(segment2.key === null, "nav assert 39")
+    console.assert(segment2.hasFilters === false, "nav assert 40")
+    const segment3 = segmentContext("/")
+    console.assert(segment3.mode === "path", "nav assert 41")
+    console.assert(segment3.page === "/", "nav assert 42")
+    console.assert(segment3.key === null, "nav assert 43")
+    console.assert(segment3.hasFilters === false, "nav assert 44")
+    const segment4 = segmentContext("/")
+    console.assert(segment4.mode === "path", "nav assert 45")
+    console.assert(segment4.page === "/", "nav assert 46")
+    console.assert(segment4.key === null, "nav assert 47")
+    console.assert(segment4.hasFilters === false, "nav assert 48")
+    const segment5 = segmentContext("/shelf/?")
+    console.assert(segment5.mode === "key", "nav assert 49")
+    console.assert(segment5.page === "/shelf/", "nav assert 50")
+    console.assert(segment5.key === null, "nav assert 51")
+    console.assert(segment5.hasFilters === true, "nav assert 52")
+    const segment6 = segmentContext("/shelf/?medium=")
+    console.assert(segment6.mode === "value", "nav assert 53")
+    console.assert(segment6.page === "/shelf/", "nav assert 54")
+    console.assert(segment6.key === "medium", "nav assert 55")
+    console.assert(segment6.hasFilters === true, "nav assert 56")
+    const segment7 = segmentContext("/shelf/?medium=manga")
+    console.assert(segment7.mode === "path", "nav assert 57")
+    console.assert(segment7.page === "/shelf/", "nav assert 58")
+    console.assert(segment7.key === null, "nav assert 59")
+    console.assert(segment7.hasFilters === true, "nav assert 60")
 
     const fixtureBridge = {
         "/": { children: [{ name: "alpha", kind: "page" }, { name: "beta", kind: "page" }], facets: {} },
@@ -488,60 +492,82 @@ function runAsserts() {
     }
 
     const derive1 = deriveCandidates(fixtureBridge, { mode: "path", page: "/", key: null, hasFilters: false })
-    console.assert(derive1.length === 2, "assert 61")
-    console.assert(derive1[0].name === "alpha", "assert 62")
-    console.assert(derive1[0].kind === "page", "assert 63")
-    console.assert(derive1[0].count === null, "assert 64")
+    console.assert(derive1.length === 2, "nav assert 61")
+    console.assert(derive1[0].name === "alpha", "nav assert 62")
+    console.assert(derive1[0].kind === "page", "nav assert 63")
+    console.assert(derive1[0].count === null, "nav assert 64")
 
     const derive2 = deriveCandidates(fixtureBridge, { mode: "path", page: "/alpha/", key: null, hasFilters: false })
-    console.assert(derive2.length === 3, "assert 65")
-    console.assert(derive2[0].name === "solo" && derive2[0].kind === "entry", "assert 66")
-    console.assert(derive2[1].name === "back" && derive2[1].kind === "command", "assert 67")
-    console.assert(derive2[2].name === "filter" && derive2[2].kind === "command", "assert 68")
+    console.assert(derive2.length === 3, "nav assert 65")
+    console.assert(derive2[0].name === "solo" && derive2[0].kind === "entry", "nav assert 66")
+    console.assert(derive2[1].name === "back" && derive2[1].kind === "command", "nav assert 67")
+    console.assert(derive2[2].name === "filter" && derive2[2].kind === "command", "nav assert 68")
 
     const derive3 = deriveCandidates(fixtureBridge, { mode: "path", page: "/beta/", key: null, hasFilters: false })
-    console.assert(derive3.length === 1, "assert 69")
-    console.assert(derive3[0].name === "back", "assert 70")
+    console.assert(derive3.length === 1, "nav assert 69")
+    console.assert(derive3[0].name === "back", "nav assert 70")
 
     const derive4 = deriveCandidates(fixtureBridge, { mode: "path", page: "/gamma/", key: null, hasFilters: false })
-    console.assert(Array.isArray(derive4) && derive4.length === 0, "assert 71")
+    console.assert(Array.isArray(derive4) && derive4.length === 0, "nav assert 71")
 
     const derive5 = deriveCandidates(fixtureBridge, { mode: "key", page: "/alpha/", key: null, hasFilters: true })
-    console.assert(derive5.length === 2, "assert 72")
-    console.assert(derive5[0].name === "medium" && derive5[0].kind === "key" && derive5[0].count === null, "assert 73")
-    console.assert(derive5[1].name === "verdict" && derive5[1].kind === "key", "assert 74")
+    console.assert(derive5.length === 2, "nav assert 72")
+    console.assert(derive5[0].name === "medium" && derive5[0].kind === "key" && derive5[0].count === null, "nav assert 73")
+    console.assert(derive5[1].name === "verdict" && derive5[1].kind === "key", "nav assert 74")
 
     const derive6 = deriveCandidates(fixtureBridge, { mode: "value", page: "/alpha/", key: "medium", hasFilters: true })
-    console.assert(derive6.length === 2, "assert 75")
-    console.assert(derive6[0].name === "manga" && derive6[0].kind === "value" && derive6[0].count === 2, "assert 76")
-    console.assert(derive6[1].name === "movie" && derive6[1].kind === "value" && derive6[1].count === 1, "assert 77")
+    console.assert(derive6.length === 2, "nav assert 75")
+    console.assert(derive6[0].name === "manga" && derive6[0].kind === "value" && derive6[0].count === 2, "nav assert 76")
+    console.assert(derive6[1].name === "movie" && derive6[1].kind === "value" && derive6[1].count === 1, "nav assert 77")
 
     const derive7 = deriveCandidates(fixtureBridge, { mode: "value", page: "/alpha/", key: "verdict", hasFilters: true })
-    console.assert(derive7.length === 1, "assert 78")
-    console.assert(derive7[0].name === "good" && derive7[0].count === 1, "assert 79")
+    console.assert(derive7.length === 1, "nav assert 78")
+    console.assert(derive7[0].name === "good" && derive7[0].count === 1, "nav assert 79")
 
     const derive8 = deriveCandidates(fixtureBridge, { mode: "value", page: "/alpha/", key: "bogus", hasFilters: true })
-    console.assert(Array.isArray(derive8) && derive8.length === 0, "assert 80")
+    console.assert(Array.isArray(derive8) && derive8.length === 0, "nav assert 80")
 
-    console.assert(isTailLegal("") === true, "assert 102")
-    console.assert(isTailLegal("shelf") === true, "assert 103")
-    console.assert(isTailLegal("hunter-x-hunter") === true, "assert 104")
-    console.assert(isTailLegal("404") === true, "assert 105")
-    console.assert(isTailLegal("-") === true, "assert 106")
-    console.assert(isTailLegal("/shelf") === false, "assert 107")
-    console.assert(isTailLegal("/") === false, "assert 108")
-    console.assert(isTailLegal("\\shelf") === false, "assert 109")
-    console.assert(isTailLegal("a@evil.com") === false, "assert 110")
-    console.assert(isTailLegal("100%") === false, "assert 111")
-    console.assert(isTailLegal("%") === false, "assert 112")
-    console.assert(isTailLegal("shelf?") === false, "assert 113")
-    console.assert(isTailLegal("?medium") === false, "assert 114")
-    console.assert(isTailLegal("?") === false, "assert 115")
-    console.assert(isTailLegal("medium=") === false, "assert 116")
-    console.assert(isTailLegal("shelf#foo") === false, "assert 117")
-    console.assert(isTailLegal("a b") === false, "assert 118")
-    console.assert(isTailLegal("..") === false, "assert 119")
-    console.assert(isTailLegal("café") === false, "assert 120")
+    console.assert(isTailLegal("") === true, "nav assert 102")
+    console.assert(isTailLegal("shelf") === true, "nav assert 103")
+    console.assert(isTailLegal("hunter-x-hunter") === true, "nav assert 104")
+    console.assert(isTailLegal("404") === true, "nav assert 105")
+    console.assert(isTailLegal("-") === true, "nav assert 106")
+    console.assert(isTailLegal("/shelf") === false, "nav assert 107")
+    console.assert(isTailLegal("/") === false, "nav assert 108")
+    console.assert(isTailLegal("\\shelf") === false, "nav assert 109")
+    console.assert(isTailLegal("a@evil.com") === false, "nav assert 110")
+    console.assert(isTailLegal("100%") === false, "nav assert 111")
+    console.assert(isTailLegal("%") === false, "nav assert 112")
+    console.assert(isTailLegal("shelf?") === false, "nav assert 113")
+    console.assert(isTailLegal("?medium") === false, "nav assert 114")
+    console.assert(isTailLegal("?") === false, "nav assert 115")
+    console.assert(isTailLegal("medium=") === false, "nav assert 116")
+    console.assert(isTailLegal("shelf#foo") === false, "nav assert 117")
+    console.assert(isTailLegal("a b") === false, "nav assert 118")
+    console.assert(isTailLegal("..") === false, "nav assert 119")
+    console.assert(isTailLegal("café") === false, "nav assert 120")
+
+    console.assert(applyToken("/", "shelf/") === "/shelf/", "nav assert 122")
+    console.assert(applyToken("/shelf/", "one-piece/") === "/shelf/one-piece/", "nav assert 123")
+    console.assert(applyToken("/shelf/", "?") === "/shelf/?", "nav assert 124")
+    console.assert(applyToken("/shelf/?medium=manga", "&") === "/shelf/?medium=manga&", "nav assert 125")
+    console.assert(applyToken("/shelf/?medium=", "manga") === "/shelf/?medium=manga", "nav assert 126")
+    console.assert(applyToken("/shelf/one-piece/", "↑") === "/shelf/", "nav assert 127")
+    console.assert(applyToken("/shelf/?medium=manga", "↑") === "/shelf/", "nav assert 128")
+    console.assert(applyToken("/shelf/?medium=manga&verdict=essential", "↑") === "/shelf/?medium=manga", "nav assert 129")
+    console.assert(applyToken("/", "↑") === "/", "nav assert 130")
+    console.assert(applyToken("/shelf/?medium=manga&2=b", "↑") === "/shelf/?medium=manga", "nav assert 131")
+    console.assert(applyToken("/shelf/?medium=manga&medium=anime", "↑") === "/shelf/", "nav assert 132")
+    console.assert(applyToken("/a/b/c/", "↑") === "/a/b/", "nav assert 133")
+    console.assert(applyToken("/shelf/?__proto__=x&medium=manga", "↑") === "/shelf/?__proto__=x", "nav assert 134")
+
+    console.assert(resolve("back", segmentContext("/")) === "↑", "nav assert 135")
+    console.assert(resolve("back", segmentContext("/?query=true")) === "↑", "nav assert 136")
+    console.assert(resolve("filter", segmentContext("/")) === "?", "nav assert 137")
+    console.assert(resolve("filter", segmentContext("/?query=true")) === "&", "nav assert 138")
+    console.assert(resolve("shelf", segmentContext("/")) === null, "nav assert 139")
+    console.assert(resolve("", segmentContext("/")) === null, "nav assert 140")
+    console.assert(resolve("BACK", segmentContext("/")) === null, "nav assert 141")
 }
 
 // ---------- MAIN ---------- //
@@ -552,6 +578,8 @@ function main() {
     }
 
     storeActualLocation()
+
+    import.meta.env.DEV && console.assert(navElements.pathReal.textContent === ("~" + navData.actualLocation).split("?")[0], "nav assert 94")
 
     inputHandler()
 

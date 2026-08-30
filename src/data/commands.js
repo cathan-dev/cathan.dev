@@ -1,4 +1,4 @@
 export const navCommands = [
-    { input: "back", real: "../" },
-    { input: "filter", real: "?" }
+    { input: "back", real: "↑" },
+    { input: "filter", real: "?", filtered: "&" }
 ]

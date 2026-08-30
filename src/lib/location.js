@@ -23,47 +23,73 @@ export function splitDestination(actual, destination) {
     return { kept: destination.substring(0, border), pending: destination.substring(border) }
 }
 
-export function buildDestination(actual, buffer) {
+export function buildDestination(level, buffer) {
     if (buffer === "") {
-        return actual
+        return level
     }
-    if (buffer.includes("?")) {
-        return actual + buffer
-    }
-    if (buffer[buffer.length - 1] === "/") {
-        return actual + buffer
-    }
-    return actual + buffer + "/"
-}
-
-export function segmentContext(actual, tokens) {
-    const actualPage = actual.split("?")[0]
-    const tokenIndex = tokens.indexOf("?")
-    if (tokenIndex === -1) {
-        const mode = "path"
-        const hasFilters = actual.includes("?")
-        const page = new URL(actualPage + tokens.join(""), "http://x").pathname
-        return { mode, page, key: null, hasFilters }
+    const mode = segmentContext(level).mode
+    if (mode === "path") {
+        return applyToken(level, buffer + "/")
     }
     else {
+        return applyToken(level, buffer)
+    }
+}
+
+export function segmentContext(level) {
+    const querySet = ["?", "&", "="]
+    const page = level.split("?")[0]
+    const lastChar = level.at(-1)
+    if (querySet.includes(lastChar)) {
         const hasFilters = true
-        const pageTokens = tokens.slice(0, tokenIndex)
-        const page = new URL(actualPage + pageTokens.join(""), "http://x").pathname
-        if (tokens.at(-1) === "?") {
+        if (lastChar === "?" || lastChar === "&") {
             const mode = "key"
             const key = null
             return { mode, page, key, hasFilters }
         }
         else {
             const mode = "value"
-            const key = tokens.at(-1).slice(0, -1)
+            let key = ""
+            if (level.includes("&")) { // need to find if & is in the string
+                key = level.split("&").at(-1).replaceAll("=", "")
+            }
+            else {
+                key = level.split("?").at(-1).slice(0, -1)
+            }
             return { mode, page, key, hasFilters }
         }
-
+    }
+    else {
+        const mode = "path"
+        const hasFilters = level.includes("?")
+        return { mode, page, key: null, hasFilters }
     }
 }
 
 export function isTailLegal(tail) {
     const re = /^[a-z0-9-]*$/
     return re.test(tail)
+}
+
+export function applyToken(location, token) {
+    const splitLocation = location.split("?")
+    switch (token) {
+        case "↑": {
+            const pathData = parsePathData(splitLocation[0], splitLocation[1])
+            if (Object.keys(pathData.filters).length !== 0) {
+                const lastKey = [...new URLSearchParams(splitLocation[1]).keys()].at(-1)
+                delete pathData.filters[lastKey]
+                return serializePathData(pathData)
+            }
+            else {
+                return new URL("..", "http://x" + pathData.page).pathname
+            }
+        }
+        default: {
+            if (token.at(-1) === "/") {
+                return splitLocation[0] + token
+            }
+            return location + token
+        }
+    }
 }
