@@ -1,3 +1,5 @@
+import { offeredCommands } from "./resolve.js"
+
 export function deriveCandidates(bridge, context) {
 
     if (bridge[context.page] === undefined) {
@@ -11,12 +13,8 @@ export function deriveCandidates(bridge, context) {
                 returnArray.push({ "name": child.name, "kind": child.kind, "count": null })
             }
 
-            if (context.page !== "/") {
-                returnArray.push({ "name": "back", "kind": "command", "count": null })
-            }
-
-            if (Object.keys(bridge[context.page].facets).length > 0) {
-                returnArray.push({ "name": "filter", "kind": "command", "count": null })
+            for (const command of offeredCommands(bridge, context)) {
+                returnArray.push({ "name": command, "kind": "command", "count": null })
             }
             break
 
@@ -47,4 +45,15 @@ export function hasFacet(bridge, page, key) {
     else {
         return Object.hasOwn(bridge[page].facets, key)
     }
+}
+
+export function hasValue(bridge, page, key, value) {
+    if (hasFacet(bridge, page, key)) {
+        return Object.hasOwn(bridge[page].facets[key], value)
+    }
+    return false
+}
+
+export function matchLinkText(page, input) {
+    return page.startsWith(input)
 }

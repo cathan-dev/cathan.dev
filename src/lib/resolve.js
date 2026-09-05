@@ -16,3 +16,16 @@ export function resolve(input, context) {
     }
     return null
 }
+
+export function offeredCommands(bridge, context) {
+    const returnedInputs = []
+    if (context.mode !== "path") {
+        return returnedInputs
+    }
+    for (const obj of navCommands) {
+        if (obj.offered(bridge, context)) {
+            returnedInputs.push(obj.input)
+        }
+    }
+    return returnedInputs
+}
