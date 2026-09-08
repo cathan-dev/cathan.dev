@@ -42,6 +42,9 @@ function inputHandler(e) {
     const inputText = getInputText()
     if (isTailLegal(inputText)) {
         navData.illegalInput = false
+        if (inputText !== navData.inputText) {
+            navData.tokenLoaded = false
+        }
         navData.inputText = inputText
         navData.selectedIndex = 0
         navElements.textCursor.getAnimations().forEach(a => a.currentTime = 0)

@@ -9,6 +9,7 @@ import {
     serializePathData,
     parsePathData,
 } from "../../lib/location.js";
+import { commandConflicts } from "../../lib/resolve.js";
 import { getCollection } from "astro:content";
 import { tryExecSync } from "../../lib/git.js";
 import { readingProgress } from "../../data/reading-status.js";
@@ -25,6 +26,8 @@ const candidates = deriveCandidates(bridge, context);
 const sortedShelf = shelfEntries.toSorted((a, b) =>
     b.data.date.localeCompare(a.data.date),
 );
+
+commandConflicts(bridge);
 
 const timestamp = tryExecSync("git log -1 --format=%cI");
 const gitHash = tryExecSync("git log -1 --format=%h");

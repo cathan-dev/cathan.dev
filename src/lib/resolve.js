@@ -29,3 +29,14 @@ export function offeredCommands(bridge, context) {
     }
     return returnedInputs
 }
+
+export function commandConflicts(bridge) {
+    const commands = navCommands.map(c => c.input)
+    for (const page of Object.keys(bridge)) {
+        for (const child of bridge[page].children.map(c => c.name)) {
+            if (commands.includes(child)) {
+                throw new Error("On page: " + String(page) + "\nChild: " + String(child) + "\nCollides with command")
+            }
+        }
+    }
+}
