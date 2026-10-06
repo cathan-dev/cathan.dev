@@ -1,7 +1,7 @@
 ---
 title: Attack on Titan
 format: short
-date: '2026-08-04'
+date: '2026-10-06'
 hook: My first love
 medium: anime
 verdict: worth-it
