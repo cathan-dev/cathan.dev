@@ -1,5 +1,6 @@
 ---
 title: Attack on Titan
+draft: false
 format: short
 date: '2026-10-06'
 hook: My first love

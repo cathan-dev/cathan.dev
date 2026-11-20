@@ -1,5 +1,6 @@
 ---
 title: 'Ghost in the Shell'
+draft: false
 format: short
 date: '2026-09-15'
 hook: Your effort to remain what you are is what limits you.

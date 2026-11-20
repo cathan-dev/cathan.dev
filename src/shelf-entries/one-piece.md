@@ -1,5 +1,6 @@
 ---
 title: One Piece
+draft: true
 format: short
 date: '2026-08-04'
 hook: Where do I begin...

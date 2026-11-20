@@ -6,6 +6,7 @@ const shelf = defineCollection({
     loader: glob({ base: './src/shelf-entries', pattern: '**/*.md' }),
     schema: z.object({
         title: z.string(),
+        draft: z.boolean().default(true),
         format: z.enum(['long', 'short']),
         date: z.string(),
         hook: z.string(),

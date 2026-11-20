@@ -1,5 +1,6 @@
 ---
 title: 'The Silence of the Lambs'
+draft: false
 format: short
 date: '2026-09-27'
 hook: I'm having an old friend for dinner

@@ -1,5 +1,6 @@
 ---
 title: Hunter x Hunter
+draft: true
 format: short
 date: '2026-08-04'
 hook: ToGOATshi

@@ -1,0 +1,20 @@
+---
+import "./Shelf.css";
+const { entry } = Astro.props;
+---
+
+<li
+    class="shelf-entry draft-entry"
+    data-medium={entry.data.medium}
+    data-verdict={entry.data.verdict}
+>
+    <div class="shelf-card">
+        <p class="shelf-card-pointer" aria-hidden="true"></p>
+        <h2 class="shelf-card-title">{entry.data.title}</h2>
+        <p class:list={["shelf-card-hook", { "is-quote": entry.data.quote }]}>
+            {entry.data.hook}
+        </p>
+        <p class="shelf-card-verdict">{entry.data.verdict}</p>
+        <p class="shelf-card-medium">{entry.data.medium}</p>
+    </div>
+</li>

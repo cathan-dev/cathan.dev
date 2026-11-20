@@ -1,5 +1,6 @@
 ---
 title: 'Spider-man: Brand New Day'
+draft: false
 format: short
 date: '2026-08-05'
 hook: What could've been

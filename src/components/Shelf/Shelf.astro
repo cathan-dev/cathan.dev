@@ -1,5 +1,6 @@
 ---
 import "./Shelf.css";
+import ShelfEntryDraft from "./ShelfEntryDraft.astro";
 import ShelfEntryShort from "./ShelfEntryShort.astro";
 import ShelfEntryLong from "./ShelfEntryLong.astro";
 import { getCollection } from "astro:content";
@@ -7,15 +8,15 @@ const shelfEntries = await getCollection("shelf");
 ---
 
 <ul class="shelf-list">
-    {
-        shelfEntries.map((entry) =>
-            entry.data.format === "long" ? (
-                <ShelfEntryLong entry={entry} />
-            ) : (
-                <ShelfEntryShort entry={entry} />
-            ),
-        )
-    }
+    {shelfEntries.map((entry) =>
+        entry.data.draft ? (
+            <ShelfEntryDraft entry={entry} />
+        ) : entry.data.format === "long" ? (
+            <ShelfEntryLong entry={entry} />
+        ) : (
+            <ShelfEntryShort entry={entry} />
+        ),
+    )}
 </ul>
 
 <script>

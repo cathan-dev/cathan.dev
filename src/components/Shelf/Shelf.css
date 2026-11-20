@@ -8,9 +8,15 @@
     margin-inline: auto;
 }
 
-.shelf-entry-long,
-.shelf-entry-short {
+.shelf-entry {
     margin-bottom: 1ch;
+}
+
+.draft-entry,
+.draft-entry h1,
+.draft-entry h2,
+.draft-entry p {
+    color: var(--rule);
 }
 
 .shelf-card {
@@ -88,6 +94,25 @@
 }
 
 /* ---------- STATE ---------- */
+
+.draft-entry:hover .shelf-card>* {
+    visibility: hidden;
+}
+
+.draft-entry:hover .shelf-card {
+    border-color: var(--muted);
+}
+
+.draft-entry:hover .shelf-card::after {
+    content: "Draft";
+    font-size: 33px;
+    color: var(--text);
+    text-shadow: var(--glow);
+    place-self: center;
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    padding-bottom: 0.5ch;
+}
 
 .shelf-card:hover,
 .shelf-card:focus-visible,

@@ -1,5 +1,6 @@
 ---
 title: 'Minority Report'
+draft: true
 format: short
 date: '2026-08-12'
 hook: Do you know what I hear? Nothing.

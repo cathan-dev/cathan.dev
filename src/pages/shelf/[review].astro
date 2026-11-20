@@ -6,7 +6,7 @@ import { render } from "astro:content";
 export async function getStaticPaths() {
     const entries = await getCollection(
         "shelf",
-        ({ data }) => data.format === "long",
+        ({ data }) => data.format === "long" && !data.draft,
     );
     return entries.map((entry) => {
         return {
