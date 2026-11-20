@@ -3,6 +3,7 @@ title: 'Minority Report'
 format: short
 date: '2026-08-12'
 hook: Do you know what I hear? Nothing.
+quote: true
 medium: movie
 verdict: worth-it
 relationships: []

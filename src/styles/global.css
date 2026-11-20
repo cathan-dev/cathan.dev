@@ -15,18 +15,18 @@
     /* body text */
 
     --interaction: #00FFFF;
-    /* links, prompt, cursor */
+    /* links, prompt */
     --voice: #FF66FF;
-    /* verdicts, emphasis — me talking */
+    /* flavour/fun colour */
     --mark: #FFFF00;
-    /* smtn else */
+    /* where you are */
     --danger: #FE2736;
     /* backgrounds only, --bg text on top */
 
     --nav-width: 32ch;
     --gutter: 1ch;
 
-    --glow: 0 0 2px currentColor;
+    --glow: 0 0 1px currentColor;
 }
 
 /* ---------- FONTS ---------- */

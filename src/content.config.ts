@@ -9,6 +9,7 @@ const shelf = defineCollection({
         format: z.enum(['long', 'short']),
         date: z.string(),
         hook: z.string(),
+        quote: z.boolean().default(false),
         medium: z.enum(['anime', 'book', 'game', 'manga', 'movie', 'show']),
         verdict: z.enum(['essential', 'worth-it', 'mixed-bag', 'not-worth-it', 'garbage']),
         relationships: z.array(z.enum(['inspiration', 'formative', 'comfort', 'overrated', 'underrated', 'love-hate', 'not-for-me', "didn't-finish"])).max(3)

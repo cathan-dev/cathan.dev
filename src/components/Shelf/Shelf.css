@@ -10,12 +10,12 @@
 
 .shelf-entry-long,
 .shelf-entry-short {
-    margin-bottom: 0.5ch;
+    margin-bottom: 1ch;
 }
 
 .shelf-card {
     padding: 0.5ch;
-    border-bottom: 2px solid var(--muted);
+    border-bottom: 1px solid var(--muted);
 
     display: grid;
     grid-template-columns: 2ch minmax(0, 1fr) auto;
@@ -59,11 +59,11 @@
     grid-area: hook;
 }
 
-.shelf-card-hook::before {
+.shelf-card-hook.is-quote::before {
     content: "\201C";
 }
 
-.shelf-card-hook::after {
+.shelf-card-hook.is-quote::after {
     content: "\201D";
 }
 

@@ -3,6 +3,7 @@ title: 'Ghost in the Shell'
 format: short
 date: '2026-09-15'
 hook: Your effort to remain what you are is what limits you.
+quote: true
 medium: movie
 verdict: worth-it
 relationships: [comfort, underrated]

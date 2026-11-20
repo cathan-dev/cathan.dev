@@ -304,6 +304,9 @@ function buildTokenElements() {
     for (const token of navData.committedTokens) {
         const tokenElement = document.createElement("span")
         tokenElement.className = "nav-token"
+        if (token === "↑") {
+            tokenElement.classList.add("nav-token-back")
+        }
         tokenElement.textContent = token
         tokenElements.push(tokenElement)
     }

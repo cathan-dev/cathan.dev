@@ -188,6 +188,10 @@
     }
 }
 
+.nav-token-back {
+    padding-inline: 0.5ch;
+}
+
 /* --- nav: preview --- */
 
 .nav-path {
