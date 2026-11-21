@@ -17,4 +17,11 @@ const shelf = defineCollection({
     }),
 });
 
-export const collections = { shelf };
+const projects = defineCollection({
+    loader: glob({ base: './src/project-entries', pattern: '**/*.md' }),
+    schema: z.object({
+        title: z.string()
+    })
+})
+
+export const collections = { shelf, projects };

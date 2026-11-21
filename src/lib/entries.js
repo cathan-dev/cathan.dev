@@ -1,3 +1,8 @@
 export function hasOwnPage(entry) {
-    return (entry.data.format === "long")
+    switch (entry.collection) {
+        case "projects":
+            return true
+        case "shelf":
+            return (entry.data.format === "long" && !entry.data.draft)
+    }
 }

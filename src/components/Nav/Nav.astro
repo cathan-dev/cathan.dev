@@ -17,8 +17,12 @@ import { watchingProgress } from "../../data/watching-status.js";
 import { getCommitCount } from "../../lib/commits.js";
 
 const shelfEntries = await getCollection("shelf");
+const projectEntries = await getCollection("projects");
 
-const bridge = buildBridge(rootChildren, pageFacets, { shelf: shelfEntries });
+const bridge = buildBridge(rootChildren, pageFacets, {
+    shelf: shelfEntries,
+    projects: projectEntries,
+});
 const path = serializePathData(parsePathData(Astro.url.pathname, ""));
 const context = segmentContext(path);
 const candidates = deriveCandidates(bridge, context);
@@ -41,89 +45,81 @@ const commitCount = await getCommitCount();
         set:html={JSON.stringify(bridge)}
     />
     <div class="nav-flavour" aria-hidden="true">
-        <p class="nav-title">─ <span>cathan.dev</span> ─────────────────</p>
+        <p class="nav-title">
+            ─ <span>cathan.dev</span> ─────────────────
+        </p>
         <div class="nav-live">
-            {
-                timestamp !== null && (
-                    <>
-                        <p class="nav-live-label">last updated</p>
-                        <p class="nav-live-timer" data-since={timestamp} />
-                        <p class="nav-live-info">{"build " + gitHash}</p>
-                    </>
-                )
-            }
+            {timestamp !== null && (
+                <>
+                    <p class="nav-live-label">last updated</p>
+                    <p class="nav-live-timer" data-since={timestamp} />
+                    <p class="nav-live-info">{"build " + gitHash}</p>
+                </>
+            )}
             <p class="nav-live-label">shelf</p>
             <p class="nav-live-value">{shelfEntries.length}</p>
-            {
-                sortedShelf.length !== 0 && (
-                    <p class="nav-live-info">
-                        {"Recent: " + sortedShelf[0].data.title}
-                    </p>
-                )
-            }
+            {sortedShelf.length !== 0 && (
+                <p class="nav-live-info">
+                    {"Recent: " + sortedShelf[0].data.title}
+                </p>
+            )}
             <p class="nav-live-label">projects</p>
-            <p class="nav-live-value">0 #bum</p>
+            <p class="nav-live-value">{projectEntries.length}</p>
             <p class="nav-live-label">reading</p>
             <p class="nav-live-talking">{readingProgress.title}</p>
             <p class="nav-live-info">
-                {
-                    "p. " +
-                        readingProgress.readPages +
-                        "/" +
-                        readingProgress.totalPages
-                }
+                {"p. " +
+                    readingProgress.readPages +
+                    "/" +
+                    readingProgress.totalPages}
             </p>
             <!-- might make the colour amber -->
             <p class="nav-live-label">watching</p>
             <p class="nav-live-talking">{watchingProgress.title}</p>
             <p class="nav-live-info">
-                {
-                    "ep. " +
-                        watchingProgress.watchedEpisodes +
-                        "/" +
-                        watchingProgress.totalEpisodes
-                }
+                {"ep. " +
+                    watchingProgress.watchedEpisodes +
+                    "/" +
+                    watchingProgress.totalEpisodes}
             </p>
             <!-- might make the colour amber -->
             <p class="nav-live-label">building</p>
-            <a href="/" class="nav-live-link" tabindex="-1">this website</a>
-            {
-                commitCount !== null && (
-                    <p class="nav-live-info">{commitCount + " commits"}</p>
-                )
-            }
+            <a href="/" class="nav-live-link" tabindex="-1">
+                this website
+            </a>
+            {commitCount !== null && (
+                <p class="nav-live-info">{commitCount + " commits"}</p>
+            )}
             <!-- could be a link in future when I have a project -->
         </div>
     </div>
     <div class="nav-container">
         <ul class="nav-list">
-            {
-                candidates.toReversed().map((candidate) => {
-                    const isLink =
-                        candidate.kind === "page" || candidate.kind === "entry";
-                    const Wrapper = isLink ? "a" : "span";
-                    return (
-                        <li class={"nav-list-item nav-list-" + candidate.kind}>
-                            <Wrapper
-                                class="nav-link"
-                                href={
-                                    isLink
-                                        ? context.page + candidate.name + "/"
-                                        : undefined
-                                }
-                            >
-                                <span class="nav-link-text">
-                                    {"> "}
-                                    <span class="nav-link-slug">
-                                        {candidate.name}
-                                    </span>
-                                    {"\u00A0"}
+            {candidates.toReversed().map((candidate) => {
+                const isLink =
+                    candidate.kind === "page" || candidate.kind === "entry";
+                const Wrapper = isLink ? "a" : "span";
+                return (
+                    <li class={"nav-list-item nav-list-" + candidate.kind}>
+                        <Wrapper
+                            class="nav-link"
+                            href={
+                                isLink
+                                    ? context.page + candidate.name + "/"
+                                    : undefined
+                            }
+                        >
+                            <span class="nav-link-text">
+                                {"> "}
+                                <span class="nav-link-slug">
+                                    {candidate.name}
                                 </span>
-                            </Wrapper>
-                        </li>
-                    );
-                })
-            }
+                                {"\u00A0"}
+                            </span>
+                        </Wrapper>
+                    </li>
+                );
+            })}
         </ul>
         <div class="nav-terminal">
             <div class="nav-input-container">
@@ -141,19 +137,19 @@ const commitCount = await getCommitCount();
             <div class="nav-search-overlay-container">
                 <span class="nav-prompt">[</span>
                 <p class="nav-overlay-text">
-                    <span class="nav-tokens"></span><span
-                        class="nav-before-cursor"></span><span
-                        class="nav-text-cursor"></span><span
-                        class="nav-after-cursor"
-                    ></span><!-- can't remove nav-after-cursor class -->
+                    <span class="nav-tokens"></span>
+                    <span class="nav-before-cursor"></span>
+                    <span class="nav-text-cursor"></span>
+                    <span class="nav-after-cursor"></span>
+                    <!-- can't remove nav-after-cursor class -->
                     <span class="nav-error" aria-live="polite"></span>
                 </p>
             </div>
         </div>
         <div class="nav-path">
             <p class="nav-path-text">
-                → <span class="nav-path-text-real">{"~" + path}</span><span
-                    class="nav-path-text-preview"></span>
+                → <span class="nav-path-text-real">{"~" + path}</span>
+                <span class="nav-path-text-preview"></span>
             </p>
         </div>
     </div>

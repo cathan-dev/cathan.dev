@@ -2,12 +2,10 @@
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import { render } from "astro:content";
+import { hasOwnPage } from "../../lib/entries.js";
 
 export async function getStaticPaths() {
-    const entries = await getCollection(
-        "shelf",
-        ({ data }) => data.format === "long" && !data.draft,
-    );
+    const entries = await getCollection("shelf", hasOwnPage);
     return entries.map((entry) => {
         return {
             params: { review: entry.id },
