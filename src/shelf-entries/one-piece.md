@@ -3,10 +3,10 @@ title: One Piece
 draft: true
 format: short
 date: '2026-08-04'
-hook: Where do I begin...
+hook: where do i begin...
 medium: manga
 verdict: essential
 relationships: [formative, inspiration, comfort]
 ---
 
-Nothing is perfect, except for One Piece. 
+nothing is perfect, except for one piece. 

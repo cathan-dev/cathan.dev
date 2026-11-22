@@ -1,8 +1,8 @@
 ---
-title: Cubing Tool
+title: cubing Tool
 preview: ./cubing-tool.png
 type: website
-description: My dream cubing website
+description: my dream cubing website
 ---
 
-I started cubing when I was around 13. I dedicated a lot of time to it, until eventually I burned out. Since then, it has been a sort of tradition that I pick it back up for a month every year or so. This time, I decided I really wanted to sink my teeth back in and get some big gains. 
+i started cubing when i was around 13. i dedicated a lot of time to it, until eventually i burned out. since then, it has been a sort of tradition that i pick it back up for a month every year or so. this time, i decided i really wanted to sink my teeth back in and get some big gains. 

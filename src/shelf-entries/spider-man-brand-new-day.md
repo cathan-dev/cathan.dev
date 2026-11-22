@@ -3,20 +3,20 @@ title: 'Spider-man: Brand New Day'
 draft: false
 format: short
 date: '2026-08-05'
-hook: What could've been
+hook: what could've been
 medium: movie
 verdict: mixed-bag
 relationships: [overrated, love-hate]
 ---
 
-I mean it's Tom Hollands best, and not a bad movie, but ughhh the first half tricked me so bad. Basically, up until the experimentation room shit I was really enjoying it. 
+i mean it's tom hollands best, and not a bad movie, but ughhh the first half tricked me so bad. basically, up until the experimentation room shit i was really enjoying it. 
 
-Then Jean Grey happened. 
+then jean grey happened. 
 
-The arc they tried to give her was so forced, especially with how she was set up in the first half; and I just think with all the focus leaving Peter the movie lost it's momentum. 
+the arc they tried to give her was so forced, especially with how she was set up in the first half; and i just think with all the focus leaving peter the movie lost it's momentum. 
 
-Other than that, the characters were so hollow and soulless, just plot devices showing up whenever the story needed them. The action and music was good, and I can't stress enough I really liked the first half. 
+other than that, the characters were so hollow and soulless, just plot devices showing up whenever the story needed them. the action and music was good, and i can't stress enough i really liked the first half. 
 
-ALSO the cgi was just weirdly inconsistent/bad. I've heard that marvel is rushing an overworking their visual effects artists so I don't blame them, it was just surprising for a headliner movie like this. 
+also the cgi was just weirdly inconsistent/bad. i've heard that marvel is rushing an overworking their visual effects artists so i don't blame them, it was just surprising for a headliner movie like this. 
 
-MCU needs to go. 
+mcu needs to go. 

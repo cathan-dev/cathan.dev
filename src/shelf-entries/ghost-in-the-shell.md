@@ -10,6 +10,6 @@ verdict: worth-it
 relationships: [comfort, underrated]
 ---
 
-I mean I loved this movie. Going in, I thought it would be more of an Akira movie, as in, amazing visuals but not the strongest story and characters, but wow I was wrong. 
+i mean i loved this movie. going in, i thought it would be more of an akira movie, as in, amazing visuals but not the strongest story and characters, but wow i was wrong. 
 
-Bit of body horror, themes of the identity, consciousness, and existence, and a great time!
+bit of body horror, themes of the identity, consciousness, and existence, and a great time!
