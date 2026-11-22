@@ -246,7 +246,8 @@
 /* ---------- RESPONSIVE ---------- */
 
 /* Make sure to change on all files if you touch the px width */
-@media (min-width: 1120px) and (pointer: fine) {
+@media (min-width: 1120px) and (pointer: fine),
+(min-width: 1120px) and (pointer: none) {
     .nav-container {
         margin-top: auto;
         margin-inline: 0;
