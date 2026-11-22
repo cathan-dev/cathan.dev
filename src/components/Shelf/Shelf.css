@@ -12,13 +12,6 @@
     margin-bottom: 1ch;
 }
 
-.draft-entry,
-.draft-entry h1,
-.draft-entry h2,
-.draft-entry p {
-    color: var(--rule);
-}
-
 .shelf-card {
     padding: 0.5ch;
     border-bottom: 1px solid var(--muted);
@@ -91,6 +84,15 @@
     margin-inline: auto;
     border-left: 2px solid var(--muted);
     padding-inline-start: 2ch;
+}
+
+/* ---------- DRAFT ---------- */
+
+.draft-entry,
+.draft-entry h1,
+.draft-entry h2,
+.draft-entry p {
+    color: var(--rule);
 }
 
 /* ---------- STATE ---------- */

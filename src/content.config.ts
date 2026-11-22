@@ -19,8 +19,11 @@ const shelf = defineCollection({
 
 const projects = defineCollection({
     loader: glob({ base: './src/project-entries', pattern: '**/*.md' }),
-    schema: z.object({
-        title: z.string()
+    schema: ({ image }) => z.object({
+        title: z.string(),
+        preview: image(),
+        type: z.enum(['website', 'game', 'skill']),
+        description: z.string()
     })
 })
 

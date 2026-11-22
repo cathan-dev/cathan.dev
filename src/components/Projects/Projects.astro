@@ -6,11 +6,26 @@ const projectEntries = await getCollection("projects");
 
 <ul class="project-list">
     {projectEntries.map((entry) => (
-        <li>
+        <li class="project-entry">
             <a href={`/projects/${entry.id}/`} class="project-card">
+                <div class="project-card-image">
+                    <img
+                        class="project-image"
+                        src={entry.data.preview.src}
+                        alt=""
+                    />
+                </div>
                 <h2 class="project-card-title">
                     <span>{entry.data.title}</span>
                 </h2>
+                <div class="project-card-body">
+                    <p class="project-card-type-header">type:</p>
+                    <p class="project-card-type">{entry.data.type}</p>
+                    <p class="project-card-desc-header">description:</p>
+                    <p class="project-card-description">
+                        {entry.data.description}
+                    </p>
+                </div>
             </a>
         </li>
     ))}
