@@ -27,12 +27,21 @@
 
 .project-card-image {
     grid-area: image;
+    display: grid;
 }
 
 .project-image {
+    grid-area: 1 / 1;
     image-rendering: pixelated;
     width: 300px;
     height: auto;
+}
+
+.project-snapshot {
+    grid-area: 1 / 1;
+    width: 300px;
+    height: auto;
+    visibility: hidden;
 }
 
 .project-card-title {
@@ -99,5 +108,10 @@
 .project-card:focus-visible {
     border-color: var(--interaction);
     color: var(--interaction);
-    background-color: var(--bg);
+    background-color: var(--rule);
+}
+
+.project-card:hover .project-snapshot,
+.project-card:focus-visible .project-snapshot {
+    visibility: visible;
 }

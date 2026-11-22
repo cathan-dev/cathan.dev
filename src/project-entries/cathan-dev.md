@@ -1,6 +1,7 @@
 ---
 title: Cathan.dev
 preview: ./cathan-dev.png
+snapshot: ./cathan-dev-snapshot.png
 type: website
 description: My personal website (you're on it)
 ---

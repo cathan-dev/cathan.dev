@@ -1,6 +1,7 @@
 ---
 import "./Projects.css";
 import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
 const projectEntries = await getCollection("projects");
 ---
 
@@ -14,6 +15,14 @@ const projectEntries = await getCollection("projects");
                         src={entry.data.preview.src}
                         alt=""
                     />
+                    {entry.data.snapshot && (
+                        <Image
+                            class="project-snapshot"
+                            src={entry.data.snapshot}
+                            alt=""
+                            width={600}
+                        />
+                    )}
                 </div>
                 <h2 class="project-card-title">
                     <span>{entry.data.title}</span>
