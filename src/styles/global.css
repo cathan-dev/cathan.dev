@@ -148,7 +148,8 @@ a {
 /* ---------- RESPONSIVE ---------- */
 
 /* Make sure to change on all files if you touch the px width */
-@media (min-width: 1120px) and (pointer: fine) {
+@media (min-width: 1120px) and (pointer: fine),
+(min-width: 1120px) and (pointer: none) {
     main {
         margin-inline-start: calc(var(--nav-width) + var(--gutter));
     }
