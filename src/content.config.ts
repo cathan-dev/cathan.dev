@@ -21,10 +21,13 @@ const projects = defineCollection({
     loader: glob({ base: './src/project-entries', pattern: '**/*.md' }),
     schema: ({ image }) => z.object({
         title: z.string(),
+        status: z.string(),
+        started: z.string(),
+        type: z.enum(['website', 'game', 'skill']),
+        description: z.string(),
+        todo: z.array(z.object({ title: z.string(), description: z.string().optional(), priority: z.int() })).optional(),
         preview: image(),
         snapshot: image().optional(),
-        type: z.enum(['website', 'game', 'skill']),
-        description: z.string()
     })
 })
 

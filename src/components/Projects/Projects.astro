@@ -9,15 +9,15 @@ const projectEntries = await getCollection("projects");
     {projectEntries.map((entry) => (
         <li class="project-entry">
             <a href={`/projects/${entry.id}/`} class="project-card">
-                <div class="project-card-image">
+                <div class="project-card-images">
                     <img
-                        class="project-image"
+                        class="project-card-image"
                         src={entry.data.preview.src}
                         alt=""
                     />
                     {entry.data.snapshot && (
                         <Image
-                            class="project-snapshot"
+                            class="project-card-snapshot"
                             src={entry.data.snapshot}
                             alt=""
                             width={600}

@@ -4,6 +4,8 @@ import { getCollection } from "astro:content";
 import { render } from "astro:content";
 import { hasOwnPage } from "../../lib/entries.js";
 
+import "../../components/Projects/Projects.css";
+
 export async function getStaticPaths() {
     const entries = await getCollection("projects", hasOwnPage);
     return entries.map((entry) => {
@@ -20,7 +22,45 @@ const { Content } = await render(entry);
 
 <Layout>
     <h1 slot="title">{entry.data.title}</h1>
+    <div class="project-header">
+        <img class="project-header-image" src={entry.data.preview.src} alt="" />
+        <h2 class="project-header-title">{entry.data.title}</h2>
+        <div class="project-header-info">
+            <p class="project-header-type-header">type:</p>
+            <p class="project-header-type">{entry.data.type}</p>
+            <p class="project-header-desc-header">description:</p>
+            <p class="project-header-description">{entry.data.description}</p>
+        </div>
+    </div>
+    <div class="project-info">
+        <p class="project-info-status-header">status:</p>
+        <p class="project-info-status">{entry.data.status}</p>
+        <p class="project-info-started-header">started:</p>
+        <p class="project-info-started">{entry.data.started}</p>
+        {entry.data.todo && (
+            <>
+                <p class="project-info-todo-header">to do:</p>
+                <p class="project-info-todo">{entry.data.todo.length}</p>
+            </>
+        )}
+    </div>
+    <h2 class="readme-header">readme</h2>
     <div class="prose">
         <Content />
     </div>
+    {entry.data.todo && (
+        <div class="to-do">
+            <h2 class="to-do-header">to do</h2>
+            <dl class="to-do-list">
+                {entry.data.todo.map((item) => (
+                    <div class="to-do-item">
+                        <dt class="to-do-item-title">{item.title}</dt>
+                        {item.description && (
+                            <dd class="to-do-item-desc">{item.description}</dd>
+                        )}
+                    </div>
+                ))}
+            </dl>
+        </div>
+    )}
 </Layout>

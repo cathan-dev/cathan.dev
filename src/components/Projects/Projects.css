@@ -17,7 +17,7 @@
     border-bottom: 1px solid var(--muted);
 
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    grid-template-columns: auto minmax(0, 2fr);
     grid-template-areas:
         "image title"
         "image body";
@@ -25,27 +25,30 @@
     place-items: center start;
 }
 
-.project-card-image {
+.project-card-images {
     grid-area: image;
     display: grid;
+    margin-right: 1ch;
 }
 
-.project-image {
+.project-card-image {
     grid-area: 1 / 1;
+    border: 2px solid var(--bg);
     image-rendering: pixelated;
-    width: 300px;
+    width: 302px;
     height: auto;
 }
 
-.project-snapshot {
+.project-card-snapshot {
     grid-area: 1 / 1;
-    width: 300px;
+    border: 2px solid var(--interaction);
+    width: 302px;
     height: auto;
     visibility: hidden;
 }
 
 .project-card-title {
-    place-self: end start;
+    place-self: end stretch;
 
     display: flex;
     grid-area: title;
@@ -102,6 +105,145 @@
     margin: 0;
 }
 
+/* ---------- PROJECT ENTRY ---------- */
+
+.project-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 2fr);
+    grid-template-areas:
+        "image title"
+        "image info";
+    border-bottom: 1px solid var(--muted);
+    padding-bottom: 1ch;
+}
+
+.project-header-image {
+    grid-area: image;
+    image-rendering: pixelated;
+    width: 300px;
+    height: auto;
+    margin-right: 1ch;
+}
+
+.project-header-title {
+    grid-area: title;
+    font-size: 44px;
+    display: flex;
+}
+
+.project-header-title::after {
+    color: var(--rule);
+    flex: 1;
+    content: "...................................................................................................." /"";
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.project-header-info {
+    display: grid;
+    grid-area: info;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+        "type-header desc-header"
+        "type description";
+}
+
+.project-header-type-header {
+    font-size: 11px;
+    grid-area: type-header;
+    color: var(--muted);
+    margin: 0;
+}
+
+.project-header-type {
+    grid-area: type;
+    margin: 0;
+}
+
+.project-header-desc-header {
+    font-size: 11px;
+    grid-area: desc-header;
+    color: var(--muted);
+    margin: 0;
+}
+
+.project-header-description {
+    grid-area: description;
+    margin: 0;
+}
+
+.project-info {
+    display: grid;
+    grid-template-areas:
+        "status-header started-header todo-header"
+        "status started todo";
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    place-items: center start;
+    border-bottom: 1px solid var(--muted);
+    padding-block: 1ch;
+}
+
+.project-info-status-header {
+    font-size: 11px;
+    color: var(--muted);
+    margin: 0;
+    grid-area: status-header;
+}
+
+.project-info-status {
+    margin: 0;
+    grid-area: status;
+}
+
+.project-info-started-header {
+    font-size: 11px;
+    color: var(--muted);
+    margin: 0;
+    grid-area: started-header;
+}
+
+.project-info-started {
+    margin: 0;
+    grid-area: started;
+}
+
+.project-info-todo-header {
+    font-size: 11px;
+    color: var(--muted);
+    margin: 0;
+    grid-area: todo-header;
+}
+
+.project-info-todo {
+    margin: 0;
+    grid-area: todo;
+}
+
+.readme-header,
+.to-do-header {
+    display: flex;
+    font-size: 33px;
+}
+
+.readme-header::before,
+.to-do-header::before,
+.readme-header::after,
+.to-do-header::after {
+    color: var(--rule);
+    flex: 1;
+    content: "...................................................................................................." /"";
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.to-do-list {
+    display: grid;
+}
+
+.to-do-item-desc {
+    color: var(--muted);
+}
+
 /* ---------- STATE ---------- */
 
 .project-card:hover,
@@ -111,7 +253,7 @@
     background-color: var(--rule);
 }
 
-.project-card:hover .project-snapshot,
-.project-card:focus-visible .project-snapshot {
+.project-card:hover .project-card-snapshot,
+.project-card:focus-visible .project-card-snapshot {
     visibility: visible;
 }
